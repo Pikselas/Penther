@@ -9,6 +9,7 @@ Window::WindowClass::WindowClass()
 	wc.cbSize = sizeof(wc);
 	wc.hInstance = hinst;
 	wc.lpszClassName = classNm;
+	wc.style = CS_DBLCLKS;
 	wc.lpfnWndProc = StaticMessageHandler;
 	RegisterClassEx(&wc);
 }
