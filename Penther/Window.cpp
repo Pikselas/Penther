@@ -27,6 +27,8 @@ HINSTANCE Window::WindowClass::GetInstance()
 	return wndcls.hinst;
 }
 
+int Window::WindowCount = 0;
+
 LRESULT Window::StaticMessageHandler(HWND handle, UINT msgcode, WPARAM wparam, LPARAM lparam)
 {
 	Window * const wnd_ptr = reinterpret_cast<Window*>(GetWindowLongPtr(handle , GWLP_USERDATA));
@@ -37,31 +39,143 @@ LRESULT Window::MessageHandler(HWND handle, UINT msgcode, WPARAM wparam, LPARAM 
 {
 	switch (msgcode)
 	{
+	case WM_LBUTTONUP:
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONDBLCLK:
+	case WM_RBUTTONUP:
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONDBLCLK:
+	case WM_MOUSEMOVE:
+	{
+		POINTS pt = MAKEPOINTS(lparam);
+		mouse.x = pt.x;
+		mouse.y = pt.y;
+	}
+	}
+	switch (msgcode)
+	{
 	 case WM_CLOSE:
 		 Closed = true;
+		 --WindowCount;
 		 break;
+	 case WM_MOUSEMOVE:
+		 if (mouse.OnMove)
+		 {
+			 mouse.OnMove(mouse);
+		 }
+		 break;
+	 case WM_LBUTTONUP:
+		 mouse.LeftPressed = false;
+		 if (mouse.OnLeftRelease)
+		 {
+			 mouse.OnLeftRelease(mouse);
+		 }
+	 break;
+	 case WM_LBUTTONDOWN:
+		 mouse.LeftPressed = true;
+		 if (mouse.OnLeftPress)
+		 {
+			 mouse.OnLeftPress(mouse);
+		 }
+	 break;
+	 case WM_LBUTTONDBLCLK:
+		 if (mouse.OnLeftDoubleClick)
+		 {
+			 mouse.OnLeftDoubleClick(mouse);
+		}
+	 break;
+	 case WM_RBUTTONUP:
+		 mouse.RightPressed = false;
+		 if (mouse.OnRightRelease)
+		 {
+			 mouse.OnRightRelease(mouse);
+		 }
+	 break;
+	 case WM_RBUTTONDOWN:
+		 mouse.RightPressed = true;
+		 if (mouse.OnRightPress)
+		 {
+			 mouse.OnRightPress(mouse);
+		 }
+	 break;
+	 case WM_RBUTTONDBLCLK:
+		 if (mouse.OnRightDoubleClick)
+		 {
+			 mouse.OnRightDoubleClick(mouse);
+		 }
+	 break;
 	}
 	return DefWindowProc(handle , msgcode , wparam , lparam);
 }
 
-Window::Window(const std::wstring& name, int height, int width) : name(name) , height(height) , width(width)
+Window::Window() : Window(L"Window", 600 , 900 ){}
+
+Window::Window(const std::wstring& name, int height, int width) : name(name), height(height), width(width)
 {
 	window_handle = CreateWindowEx(0, WindowClass::GetName(), name.c_str(), WS_CAPTION | WS_SYSMENU | WS_VISIBLE | WS_MINIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, width, height, nullptr, nullptr,
-									WindowClass::GetInstance(), nullptr);
-	SetWindowLongPtr(window_handle , GWLP_USERDATA , reinterpret_cast<LONG_PTR>(this));
+		WindowClass::GetInstance(), nullptr);
+	SetWindowLongPtr(window_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+	++WindowCount;
 }
 
-void Window::MainLoop()
+void Window::ChangeTitle(const std::wstring& title)
+{
+	SetWindowText(window_handle, title.c_str());
+}
+
+void Window::ProcessEvents() const
+{
+	Window::MainLoop(this);
+}
+
+void Window::MainLoop(const Window* const window)
 {
 	MSG msg;
-	while (true)
+	if (window != nullptr)
 	{
-		PeekMessage(&msg, window_handle , 0, 0 , PM_REMOVE);
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-		if (Closed)
+		while (true)
 		{
-			break;
+			PeekMessage(&msg, window->window_handle, 0, 0, PM_REMOVE);
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+			if (window->Closed)
+			{
+				break;
+			}
 		}
 	}
+	else
+	{
+		while (WindowCount > 0)
+		{
+			PeekMessage(&msg, nullptr , 0, 0, PM_REMOVE);
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+	}
+}
+
+bool Window::Mouse::IsLeftPressed() const
+{
+	return LeftPressed;
+}
+
+bool Window::Mouse::IsRightPressed() const
+{
+	return RightPressed;
+}
+
+int Window::Mouse::GetX() const
+{
+	return x;
+}
+
+int Window::Mouse::GetY() const
+{
+	return y;
+}
+
+std::pair<int, int> Window::Mouse::GetXY() const
+{
+	return {x , y};
 }

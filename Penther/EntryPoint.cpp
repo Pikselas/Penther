@@ -1,9 +1,9 @@
 #include"Window.h"
-
-int WINAPI WinMain(HINSTANCE hinst , HINSTANCE hprev , LPSTR cmdln , int cmds)
+#include<sstream>
+int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 {
-	Window wnd(L"wnd" , 200 , 400);
+	Window wnd;
 
-	wnd.MainLoop();
+	wnd.ProcessEvents();
 	return 0;
 }

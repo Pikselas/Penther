@@ -1,6 +1,7 @@
 #pragma once
 #include<Windows.h>
 #include<string>
+#include<functional>
 class Window
 {
 	private:
@@ -16,17 +17,50 @@ class Window
 			 constexpr static const wchar_t* GetName();
 			 static HINSTANCE GetInstance();
 		};
+	public:
+		class Mouse
+		{
+		friend class Window;
+		private:
+			int x;
+			int y;
+		private:
+			bool LeftPressed;
+			bool RightPressed;
+		public:
+			bool IsLeftPressed() const;
+			bool IsRightPressed() const;
+			int GetX() const;
+			int GetY() const;
+			std::pair<int, int> GetXY() const;
+		public:
+			using EventHandlerType = std::function<void(Mouse&)>;
+			EventHandlerType OnMove				= nullptr;
+			EventHandlerType OnLeftPress		= nullptr;
+			EventHandlerType OnRightPress		= nullptr;
+			EventHandlerType OnLeftRelease		= nullptr;
+			EventHandlerType OnRightRelease		= nullptr;
+			EventHandlerType OnLeftDoubleClick  = nullptr;
+			EventHandlerType OnRightDoubleClick = nullptr;
+		};
 	private:
 		std::wstring name;
 		int height;
 		int width;
 		bool Closed = false;
+		static int WindowCount;
 	private:
 		HWND window_handle;
 	private:
 		static LRESULT StaticMessageHandler(HWND handle , UINT msgcode , WPARAM wparam ,LPARAM lparam);
 		LRESULT MessageHandler(HWND handle, UINT msgcode, WPARAM wparam, LPARAM lparam);
 	public:
+		Mouse mouse;
+	public:
+		Window();
 		Window(const std::wstring& name, int height, int width);
-		void MainLoop();
+		void ChangeTitle(const std::wstring& title);
+		void ProcessEvents() const;
+	public:
+		static void MainLoop(const Window* const window);
 };
