@@ -28,11 +28,15 @@ class Window
 			bool LeftPressed;
 			bool RightPressed;
 		public:
+			Window& ParentWindow;
+		public:
 			bool IsLeftPressed() const;
 			bool IsRightPressed() const;
 			int GetX() const;
 			int GetY() const;
 			std::pair<int, int> GetXY() const;
+		public:
+			Mouse(Window& wnd);
 		public:
 			using EventHandlerType = std::function<void(Mouse&)>;
 			EventHandlerType OnMove				= nullptr;
@@ -61,6 +65,8 @@ class Window
 		Window(const std::wstring& name, int height, int width);
 		void ChangeTitle(const std::wstring& title);
 		void ProcessEvents() const;
+	public:
+		constexpr static Window* ALL_WINDOWS = nullptr;
 	public:
 		static void MainLoop(const Window* const window);
 };
