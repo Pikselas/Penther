@@ -118,7 +118,7 @@ LRESULT Window::MessageHandler(HWND handle, UINT msgcode, WPARAM wparam, LPARAM 
 
 Window::Window() : Window(L"Window", 600 , 900 ){}
 
-Window::Window(const std::wstring& name, int height, int width) : name(name), height(height), width(width) , mouse(*this)
+Window::Window(const std::wstring& name, int height, int width) : name(name), height(height), width(width)
 {
 	window_handle = CreateWindowEx(0, WindowClass::GetName(), name.c_str(), WS_CAPTION | WS_SYSMENU | WS_VISIBLE | WS_MINIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, width, height, nullptr, nullptr,
 		WindowClass::GetInstance(), nullptr);
