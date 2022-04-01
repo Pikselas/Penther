@@ -1,6 +1,7 @@
 #pragma once
 #include<Windows.h>
 #include<string>
+#include<bitset>
 #include<functional>
 class Window
 {
@@ -22,13 +23,11 @@ class Window
 		{
 		friend class Window;
 		private:
-			int x;
-			int y;
+			int x = -1;
+			int y = -1;
 		private:
-			bool LeftPressed;
-			bool RightPressed;
-		public:
-			Window& ParentWindow;
+			bool LeftPressed = false;
+			bool RightPressed = false;
 		public:
 			bool IsLeftPressed() const;
 			bool IsRightPressed() const;
@@ -36,9 +35,7 @@ class Window
 			int GetY() const;
 			std::pair<int, int> GetXY() const;
 		public:
-			Mouse(Window& wnd);
-		public:
-			using EventHandlerType = std::function<void(Mouse&)>;
+			using EventHandlerType = std::function<void(Window&)>;
 			EventHandlerType OnMove				= nullptr;
 			EventHandlerType OnLeftPress		= nullptr;
 			EventHandlerType OnRightPress		= nullptr;

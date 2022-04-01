@@ -9,7 +9,7 @@ Window::WindowClass::WindowClass()
 	wc.cbSize = sizeof(wc);
 	wc.hInstance = hinst;
 	wc.lpszClassName = classNm;
-	wc.style = CS_DBLCLKS;
+	wc.style = CS_DBLCLKS; //Enables window to take double click events
 	wc.lpfnWndProc = StaticMessageHandler;
 	RegisterClassEx(&wc);
 }
@@ -62,48 +62,55 @@ LRESULT Window::MessageHandler(HWND handle, UINT msgcode, WPARAM wparam, LPARAM 
 	 case WM_MOUSEMOVE:
 		 if (mouse.OnMove)
 		 {
-			 mouse.OnMove(mouse);
+			 mouse.OnMove(*this);
 		 }
 		 break;
 	 case WM_LBUTTONUP:
 		 mouse.LeftPressed = false;
 		 if (mouse.OnLeftRelease)
 		 {
-			 mouse.OnLeftRelease(mouse);
+			 mouse.OnLeftRelease(*this);
 		 }
 	 break;
 	 case WM_LBUTTONDOWN:
 		 mouse.LeftPressed = true;
 		 if (mouse.OnLeftPress)
 		 {
-			 mouse.OnLeftPress(mouse);
+			 mouse.OnLeftPress(*this);
 		 }
 	 break;
 	 case WM_LBUTTONDBLCLK:
 		 if (mouse.OnLeftDoubleClick)
 		 {
-			 mouse.OnLeftDoubleClick(mouse);
+			 mouse.OnLeftDoubleClick(*this);
 		}
 	 break;
 	 case WM_RBUTTONUP:
 		 mouse.RightPressed = false;
 		 if (mouse.OnRightRelease)
 		 {
-			 mouse.OnRightRelease(mouse);
+			 mouse.OnRightRelease(*this);
 		 }
 	 break;
 	 case WM_RBUTTONDOWN:
 		 mouse.RightPressed = true;
 		 if (mouse.OnRightPress)
 		 {
-			 mouse.OnRightPress(mouse);
+			 mouse.OnRightPress(*this);
 		 }
 	 break;
 	 case WM_RBUTTONDBLCLK:
 		 if (mouse.OnRightDoubleClick)
 		 {
-			 mouse.OnRightDoubleClick(mouse);
+			 mouse.OnRightDoubleClick(*this);
 		 }
+	 break;
+	 case WM_KEYDOWN:
+	 {
+		 static std::wstring ws;
+		 ws.push_back('H');
+		 SetWindowText(handle, ws.c_str());
+	 }
 	 break;
 	}
 	return DefWindowProc(handle , msgcode , wparam , lparam);
@@ -180,5 +187,3 @@ std::pair<int, int> Window::Mouse::GetXY() const
 {
 	return {x , y};
 }
-
-Window::Mouse::Mouse(Window& wnd) : ParentWindow(wnd){}
