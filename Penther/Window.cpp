@@ -107,9 +107,36 @@ LRESULT Window::MessageHandler(HWND handle, UINT msgcode, WPARAM wparam, LPARAM 
 	 break;
 	 case WM_KEYDOWN:
 	 {
-		 static std::wstring ws;
-		 ws.push_back('H');
-		 SetWindowText(handle, ws.c_str());
+		 //if repeated then bit 30 of lparam will be true
+		 constexpr unsigned int Mask = 0b1 << 30;
+		 bool repeated = ((Mask & lparam) != 0);
+		 if (!repeated || keyboard.IsRepeatEnabled())
+		 {
+			 keyboard.KEY_STAT[static_cast<unsigned char>(wparam)] = true;
+			 if (keyboard.OnKeyPress)
+			 {
+				 keyboard.OnKeyPress({*this , static_cast<unsigned char>(wparam)  , repeated});
+			 }
+		 }
+	 }
+	 break;
+	 case WM_KEYUP:
+	 {
+		 keyboard.KEY_STAT[static_cast<unsigned char>(wparam)] = false;
+		 if (keyboard.OnKeyRelease)
+		 {
+			 keyboard.OnKeyRelease({ *this , static_cast<unsigned char>(wparam)  , false });
+		 }
+	 }
+	 break;
+	 case WM_CHAR:
+	 {
+		 constexpr unsigned int Mask = 0b1 << 30;
+		 bool repeated = ((Mask & lparam) != 0);
+		 if (keyboard.OnCharInput)
+		 {
+			 keyboard.OnCharInput({ *this , static_cast<unsigned char>(wparam) , repeated });
+		 }
 	 }
 	 break;
 	}
@@ -187,3 +214,26 @@ std::pair<int, int> Window::Mouse::GetXY() const
 {
 	return {x , y};
 }
+
+bool Window::KeyBoard::IsKeyDown(unsigned char keycode) const
+{
+	return KEY_STAT[keycode];
+}
+
+bool Window::KeyBoard::IsRepeatEnabled() const
+{
+	return REPEAT_ENABLED;
+}
+
+void Window::KeyBoard::EnableKeyRepeat()
+{
+	REPEAT_ENABLED = true;
+}
+
+void Window::KeyBoard::DisableKeyRepeat()
+{
+	REPEAT_ENABLED = false;
+}
+
+Window::KeyBoard::EventT::EventT(Window& wnd, unsigned char code, bool repeat) : window(wnd) , KEY_CODE(code) , IS_REPEATED(repeat)
+{}

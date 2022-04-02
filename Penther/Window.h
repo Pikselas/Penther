@@ -1,6 +1,6 @@
 #pragma once
 #include<Windows.h>
-#include<string>
+#include<sstream>
 #include<bitset>
 #include<functional>
 class Window
@@ -44,6 +44,31 @@ class Window
 			EventHandlerType OnLeftDoubleClick  = nullptr;
 			EventHandlerType OnRightDoubleClick = nullptr;
 		};
+		class KeyBoard
+		{
+			friend class Window;
+		private:
+			std::bitset<255> KEY_STAT;
+			bool REPEAT_ENABLED = false;
+		public:
+			bool IsKeyDown(unsigned char keycode) const;
+			bool IsRepeatEnabled() const;
+			void EnableKeyRepeat();
+			void DisableKeyRepeat();
+		public:
+			struct EventT
+			{
+				Window& window;
+				unsigned char KEY_CODE;
+				bool IS_REPEATED;
+				EventT(Window& wnd, unsigned char code, bool repeat);
+			};
+		public:
+			using EventHandlerType = std::function<void(EventT)>;
+			EventHandlerType OnKeyPress		= nullptr;
+			EventHandlerType OnKeyRelease	= nullptr;
+			EventHandlerType OnCharInput	= nullptr;
+		};
 	private:
 		std::wstring name;
 		int height;
@@ -57,6 +82,7 @@ class Window
 		LRESULT MessageHandler(HWND handle, UINT msgcode, WPARAM wparam, LPARAM lparam);
 	public:
 		Mouse mouse;
+		KeyBoard keyboard;
 	public:
 		Window();
 		Window(const std::wstring& name, int height, int width);
