@@ -125,7 +125,7 @@ LRESULT Window::MessageHandler(HWND handle, UINT msgcode, WPARAM wparam, LPARAM 
 		 keyboard.KEY_STAT[static_cast<unsigned char>(wparam)] = false;
 		 if (keyboard.OnKeyRelease)
 		 {
-			 keyboard.OnKeyRelease({ *this , static_cast<unsigned char>(wparam)  , false });
+		   keyboard.OnKeyRelease({ *this , static_cast<unsigned char>(wparam)  , false });
 		 }
 	 }
 	 break;
@@ -170,12 +170,14 @@ void Window::MainLoop(const Window* const window)
 	{
 		while (true)
 		{
-			PeekMessage(&msg, window->window_handle, 0, 0, PM_REMOVE);
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			if (window->Closed)
+			if (PeekMessage(&msg, window->window_handle, 0, 0, PM_REMOVE))
 			{
-				break;
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+				if (window->Closed)
+				{
+					break;
+				}
 			}
 		}
 	}
@@ -183,9 +185,11 @@ void Window::MainLoop(const Window* const window)
 	{
 		while (WindowCount > 0)
 		{
-			PeekMessage(&msg, nullptr , 0, 0, PM_REMOVE);
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
 	}
 }
