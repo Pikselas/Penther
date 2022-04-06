@@ -1,4 +1,5 @@
 #include"Window.h"
+#include<thread>
 
 void press(Window::KeyBoard::EventT ev)
 {
@@ -9,12 +10,7 @@ void press(Window::KeyBoard::EventT ev)
 
 int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 {
-	{
-		Window wnd;
-		wnd.ProcessEvents();
-	}
-	//d.keyboard.OnKeyPress = press;
-
+	Window wnd;
 	Window::MainLoop(Window::ALL_WINDOWS);
 	return 0;
 }

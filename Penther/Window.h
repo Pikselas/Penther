@@ -3,6 +3,7 @@
 #include<sstream>
 #include<bitset>
 #include<functional>
+#include"resource.h"
 class Window
 {
 	private:

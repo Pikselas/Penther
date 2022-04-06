@@ -11,6 +11,8 @@ Window::WindowClass::WindowClass()
 	wc.lpszClassName = classNm;
 	wc.style = CS_DBLCLKS; //Enables window to take double click events
 	wc.lpfnWndProc = StaticMessageHandler;
+	wc.hIcon = static_cast<HICON>(LoadImage(hinst, MAKEINTRESOURCE(IDI_ICON1) , IMAGE_ICON,256 , 256 , 0 ));
+	wc.hIconSm = static_cast<HICON>(LoadImage(hinst, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 256 , 256 , 0));
 	RegisterClassEx(&wc);
 }
 Window::WindowClass::~WindowClass()
