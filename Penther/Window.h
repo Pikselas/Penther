@@ -90,10 +90,13 @@ class Window
 		Window();
 		Window(const std::wstring& name, int height, int width);
 		~Window();
+		bool IsOpen() const;
 		void ChangeTitle(const std::wstring& title);
 		void ProcessEvents() const;
 	public:
 		constexpr static Window* ALL_WINDOWS = nullptr;
 	public:
 		static void MainLoop(const Window* const window);
+		static void ProcessWindowEvents();
+		static int GetWindowCount();
 };

@@ -175,6 +175,11 @@ Window::~Window()
 	}
 }
 
+bool Window::IsOpen() const
+{
+	return !Closed;
+}
+
 void Window::ChangeTitle(const std::wstring& title)
 {
 	SetWindowText(window_handle, title.c_str());
@@ -182,7 +187,12 @@ void Window::ChangeTitle(const std::wstring& title)
 
 void Window::ProcessEvents() const
 {
-	Window::MainLoop(this);
+	MSG msg;
+	if (PeekMessage(&msg, window_handle, 0, 0, PM_REMOVE))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 }
 
 void Window::MainLoop(const Window* const window)
@@ -210,6 +220,21 @@ void Window::MainLoop(const Window* const window)
 			}
 		}
 	}
+}
+
+void Window::ProcessWindowEvents()
+{
+	MSG msg;
+	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
+	{
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+
+int Window::GetWindowCount()
+{
+	return WindowCount;
 }
 
 bool Window::Mouse::IsLeftPressed() const

@@ -11,6 +11,9 @@ void press(Window::KeyBoard::EventT ev)
 int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 {
 	Window wnd;
-	Window::MainLoop(Window::ALL_WINDOWS);
+	while (wnd.IsOpen())
+	{
+		wnd.ProcessEvents();
+	}
 	return 0;
 }
