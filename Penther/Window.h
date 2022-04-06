@@ -34,6 +34,7 @@ class Window
 			int GetX() const;
 			int GetY() const;
 			std::pair<int, int> GetXY() const;
+			void Reset();
 		public:
 			using EventHandlerType = std::function<void(Window&)>;
 			EventHandlerType OnMove				= nullptr;
@@ -55,6 +56,7 @@ class Window
 			bool IsRepeatEnabled() const;
 			void EnableKeyRepeat();
 			void DisableKeyRepeat();
+			void Reset();
 		public:
 			struct EventT
 			{

@@ -139,6 +139,9 @@ LRESULT Window::MessageHandler(HWND handle, UINT msgcode, WPARAM wparam, LPARAM 
 		 }
 	 }
 	 break;
+	 case WM_KILLFOCUS:
+		 mouse.Reset();
+		 keyboard.Reset();
 	}
 	return DefWindowProc(handle , msgcode , wparam , lparam);
 }
@@ -219,6 +222,12 @@ std::pair<int, int> Window::Mouse::GetXY() const
 	return {x , y};
 }
 
+void Window::Mouse::Reset()
+{
+	x = y = -1;
+	LeftPressed = RightPressed = false;
+}
+
 bool Window::KeyBoard::IsKeyDown(unsigned char keycode) const
 {
 	return KEY_STAT[keycode];
@@ -237,6 +246,11 @@ void Window::KeyBoard::EnableKeyRepeat()
 void Window::KeyBoard::DisableKeyRepeat()
 {
 	REPEAT_ENABLED = false;
+}
+
+void Window::KeyBoard::Reset()
+{
+	KEY_STAT.reset();
 }
 
 Window::KeyBoard::EventT::EventT(Window& wnd, unsigned char code, bool repeat) : window(wnd) , KEY_CODE(code) , IS_REPEATED(repeat)
