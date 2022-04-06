@@ -88,6 +88,7 @@ class Window
 	public:
 		Window();
 		Window(const std::wstring& name, int height, int width);
+		~Window();
 		void ChangeTitle(const std::wstring& title);
 		void ProcessEvents() const;
 	public:

@@ -156,6 +156,16 @@ Window::Window(const std::wstring& name, int height, int width) : name(name), he
 	++WindowCount;
 }
 
+Window::~Window()
+{
+	if (!Closed)
+	{
+		DestroyWindow(window_handle);
+		Closed = true;
+		--WindowCount;
+	}
+}
+
 void Window::ChangeTitle(const std::wstring& title)
 {
 	SetWindowText(window_handle, title.c_str());
@@ -171,16 +181,12 @@ void Window::MainLoop(const Window* const window)
 	MSG msg;
 	if (window != nullptr)
 	{
-		while (true)
+		while (!window->Closed)
 		{
 			if (PeekMessage(&msg, window->window_handle, 0, 0, PM_REMOVE))
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
-				if (window->Closed)
-				{
-					break;
-				}
 			}
 		}
 	}
