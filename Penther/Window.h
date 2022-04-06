@@ -36,12 +36,12 @@ class Window
 			std::pair<int, int> GetXY() const;
 		public:
 			using EventHandlerType = std::function<void(Window&)>;
-			EventHandlerType OnMove			= nullptr;
+			EventHandlerType OnMove				= nullptr;
 			EventHandlerType OnLeftPress		= nullptr;
 			EventHandlerType OnRightPress		= nullptr;
 			EventHandlerType OnLeftRelease		= nullptr;
 			EventHandlerType OnRightRelease		= nullptr;
-			EventHandlerType OnLeftDoubleClick  = nullptr;
+			EventHandlerType OnLeftDoubleClick	= nullptr;
 			EventHandlerType OnRightDoubleClick = nullptr;
 		};
 		class KeyBoard
