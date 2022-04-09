@@ -1,19 +1,26 @@
 #include"Window.h"
 #include<thread>
 
-void press(Window::KeyBoard::EventT ev)
-{
-	static std::wstringstream ws;
-	ws << (char)ev.KEY_CODE;
-	ev.window.ChangeTitle(ws.str());
-}
-
 int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 {
-	Window wnd;
-	while (wnd.IsOpen())
+	try
 	{
-		wnd.ProcessEvents();
+		Window wnd;
+
+		throw Window::Exception(ERROR_ARENA_TRASHED);
+
+		while (wnd.IsOpen())
+		{
+			wnd.ProcessEvents();
+		}
+	}
+	catch (Window::Exception e)
+	{
+		std::stringstream ss;
+		ss << "[[FILE]]" << " " << e.GetFile() << "\n"
+			<< "[[LINE]]" << " " << e.GetLine() << "\n"
+			<< "[[REASON]]" << " " << e.GetReason();
+		MessageBox(nullptr, ss.str().c_str(), "Window error", MB_ICONERROR);
 	}
 	return 0;
 }

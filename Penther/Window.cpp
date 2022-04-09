@@ -20,7 +20,7 @@ Window::WindowClass::~WindowClass()
 	UnregisterClass(classNm , hinst);
 }
 
-constexpr const wchar_t* Window::WindowClass::GetName()
+constexpr const char* Window::WindowClass::GetName()
 {
 	return classNm;
 }
@@ -148,9 +148,9 @@ LRESULT Window::MessageHandler(HWND handle, UINT msgcode, WPARAM wparam, LPARAM 
 	return DefWindowProc(handle , msgcode , wparam , lparam);
 }
 
-Window::Window() : Window(L"Window", 600 , 900 ){}
+Window::Window() : Window("Window", 600 , 900 ){}
 
-Window::Window(const std::wstring& name, int height, int width) : name(name), height(height), width(width)
+Window::Window(const std::string& name, int height, int width) : name(name), height(height), width(width)
 {
 
 	RECT wr = {0};
@@ -180,7 +180,7 @@ bool Window::IsOpen() const
 	return !Closed;
 }
 
-void Window::ChangeTitle(const std::wstring& title)
+void Window::ChangeTitle(const std::string& title)
 {
 	SetWindowText(window_handle, title.c_str());
 }
@@ -295,3 +295,33 @@ void Window::KeyBoard::Reset()
 
 Window::KeyBoard::EventT::EventT(Window& wnd, unsigned char code, bool repeat) : window(wnd) , KEY_CODE(code) , IS_REPEATED(repeat)
 {}
+
+Window::Exception::Exception(HRESULT hr , std::source_location s) : code(hr)
+{
+	char * pcharBuff = nullptr;
+	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), reinterpret_cast<LPSTR>(&pcharBuff), 0, nullptr);
+	message = pcharBuff;
+	file = s.file_name();
+	line = s.line();
+	LocalFree(pcharBuff);
+}
+
+std::string Window::Exception::GetReason() const
+{
+	return message;
+}
+
+unsigned int Window::Exception::GetLine() const
+{
+	return line;
+}
+
+std::string Window::Exception::GetFile() const
+{
+	return file;
+}
+
+HRESULT Window::Exception::GetErrorCode() const
+{
+	return code;
+}

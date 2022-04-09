@@ -3,6 +3,7 @@
 #include<sstream>
 #include<bitset>
 #include<functional>
+#include<source_location>
 #include"resource.h"
 class Window
 {
@@ -10,13 +11,13 @@ class Window
 		class WindowClass
 		{
 		 private:
-			constexpr static const wchar_t* classNm = L"PentherWindowClass";
+			constexpr static const char* classNm = "PentherWindowClass";
 			WindowClass();
 			~WindowClass();
 			static WindowClass wndcls;
 			HINSTANCE hinst;
 		 public:
-			 constexpr static const wchar_t* GetName();
+			 constexpr static const char* GetName();
 			 static HINSTANCE GetInstance();
 		};
 	public:
@@ -72,8 +73,22 @@ class Window
 			EventHandlerType OnKeyRelease	= nullptr;
 			EventHandlerType OnCharInput	= nullptr;
 		};
+		class Exception
+		{
+		private:
+			const HRESULT code;
+			std::string message;
+			std::string file;
+			unsigned int line;
+		public:
+			Exception(HRESULT hr , std::source_location s = std::source_location::current());
+			std::string GetReason() const;
+			unsigned int GetLine() const;
+			std::string GetFile() const;
+			HRESULT GetErrorCode() const;
+		};
 	private:
-		std::wstring name;
+		std::string name;
 		int height;
 		int width;
 		bool Closed = false;
@@ -88,10 +103,10 @@ class Window
 		KeyBoard keyboard;
 	public:
 		Window();
-		Window(const std::wstring& name, int height, int width);
+		Window(const std::string& name, int height, int width);
 		~Window();
 		bool IsOpen() const;
-		void ChangeTitle(const std::wstring& title);
+		void ChangeTitle(const std::string& title);
 		void ProcessEvents() const;
 	public:
 		constexpr static Window* ALL_WINDOWS = nullptr;
@@ -100,3 +115,5 @@ class Window
 		static void ProcessWindowEvents();
 		static int GetWindowCount();
 };
+
+#define THROW_IF_FAILED(hr) if(auto hrcode = hr ; FAILED(hrcode)) throw Window::Exception(hrcode)
