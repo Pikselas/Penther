@@ -159,10 +159,18 @@ Window::Window(const std::string& name, int height, int width) : name(name), hei
 
 	AdjustWindowRect(&wr, WS_CAPTION | WS_SYSMENU | WS_VISIBLE | WS_MINIMIZEBOX, FALSE);
 
-	window_handle = CreateWindowEx(0, WindowClass::GetName(), name.c_str(), WS_CAPTION | WS_SYSMENU | WS_VISIBLE | WS_MINIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left , wr.bottom - wr.top , nullptr, nullptr,
+	window_handle = CreateWindowEx(0, "" , name.c_str(), WS_CAPTION | WS_SYSMENU | WS_VISIBLE | WS_MINIMIZEBOX, CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr,
 		WindowClass::GetInstance(), nullptr);
-	SetWindowLongPtr(window_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
-	++WindowCount;
+
+	if (window_handle == nullptr)
+	{
+		throw Exception(GetLastError());
+	}
+	else
+	{
+		SetWindowLongPtr(window_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+		++WindowCount;
+	}
 }
 
 Window::~Window()

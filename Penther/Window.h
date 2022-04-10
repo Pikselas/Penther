@@ -116,4 +116,4 @@ class Window
 		static int GetWindowCount();
 };
 
-#define THROW_IF_FAILED(hr) if(auto hrcode = hr ; FAILED(hrcode)) throw Window::Exception(hrcode)
+#define THROW_IF_FAILED(hrcall) if(HRESULT hrcode = hr ; FAILED(hrcode)) throw Window::Exception(hrcode)

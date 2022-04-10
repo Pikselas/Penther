@@ -7,8 +7,6 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 	{
 		Window wnd;
 
-		throw Window::Exception(ERROR_ARENA_TRASHED);
-
 		while (wnd.IsOpen())
 		{
 			wnd.ProcessEvents();
