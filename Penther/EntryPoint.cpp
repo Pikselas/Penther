@@ -6,20 +6,23 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 	try
 	{
 		Window wnd;
-		Canvas2D c2d (wnd);
-		int k = 100;
+		Canvas2D c2d(wnd);
+
 		while (wnd.IsOpen())
 		{
-			for (auto i = k; i < k + 100; ++i)
+			if (wnd.mouse.IsLeftPressed())
 			{
-				for (auto j = k; j < k + 100; ++j)
+				const auto [x, y]  = wnd.mouse.GetXY();
+				for (int i = 0 ;i < 10; ++i)
 				{
-					c2d.DrawPixel(j, i, { 255 , 255 , 255 });
+					for (int j = 0; j < 10; j++)
+					{
+						c2d.DrawPixel(x + j , y + i , {255 , 255 , 255});
+					}
 				}
 			}
 			c2d.DrawOnWindow();
 			wnd.ProcessEvents();
-			++k;
 		}
 	}
 	catch (Canvas2D::Exception e)
