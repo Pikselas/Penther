@@ -5,8 +5,12 @@
 #include<functional>
 #include<source_location>
 #include"resource.h"
+
+class Canvas2D;
+
 class Window
 {
+	friend class Canvas2D;
 	private:
 		class WindowClass
 		{
@@ -89,8 +93,8 @@ class Window
 		};
 	private:
 		std::string name;
-		int height;
-		int width;
+		unsigned int height;
+		unsigned int width;
 		bool Closed = false;
 		static int WindowCount;
 	private:
@@ -116,4 +120,4 @@ class Window
 		static int GetWindowCount();
 };
 
-#define THROW_IF_FAILED(hrcall) if(HRESULT hrcode = hr ; FAILED(hrcode)) throw Window::Exception(hrcode)
+#define THROW_IF_FAILED(hrcall) if(HRESULT hrcode = hrcall ; FAILED(hrcode)) throw Window::Exception(hrcode)

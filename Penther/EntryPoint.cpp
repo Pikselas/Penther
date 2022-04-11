@@ -1,11 +1,12 @@
 #include"Window.h"
-#include<thread>
+#include"Canvas2D.h"
 
 int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 {
 	try
 	{
 		Window wnd;
+		Canvas2D c2d (wnd);
 
 		while (wnd.IsOpen())
 		{
