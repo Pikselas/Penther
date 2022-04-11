@@ -22,6 +22,14 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 			++k;
 		}
 	}
+	catch (Canvas2D::Exception e)
+	{
+		std::stringstream ss;
+		ss << "[[FILE]]" << " " << e.GetFile() << "\n"
+			<< "[[LINE]]" << " " << e.GetLine() << "\n"
+			<< "[[REASON]]" << " " << e.GetReason();
+		MessageBox(nullptr, ss.str().c_str(), "Window error", MB_ICONERROR);
+	}
 	catch (Window::Exception e)
 	{
 		std::stringstream ss;
@@ -29,6 +37,10 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 			<< "[[LINE]]" << " " << e.GetLine() << "\n"
 			<< "[[REASON]]" << " " << e.GetReason();
 		MessageBox(nullptr, ss.str().c_str(), "Window error", MB_ICONERROR);
+	}
+	catch (std::exception e)
+	{
+		MessageBox(nullptr, e.what() , "standard error", MB_ICONERROR);
 	}
 	return 0;
 }

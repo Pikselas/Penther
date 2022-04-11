@@ -21,7 +21,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11InputLayout>		InputLayout;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState>	    SamplerState;
 public:
-	using Exception = Window::Exception;
+	class Exception :public Window::Exception {};
 	struct ColorT
 	{
 		unsigned char red;

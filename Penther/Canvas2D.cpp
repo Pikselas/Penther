@@ -144,7 +144,14 @@ Canvas2D::Canvas2D(const Window& window) : height(window.height) , width(window.
 	const size_t buffsize = sizeof(ColorT) * width * height;
 	PixelData = reinterpret_cast<ColorT*>(
 		_aligned_malloc(buffsize, 16u));
-	memset(PixelData, 0, buffsize);
+	if (PixelData)
+	{
+		memset(PixelData, 0, buffsize);
+	}
+	else
+	{
+		throw std::runtime_error("Error Allocating memory");
+	}
 }
 
 Canvas2D::~Canvas2D()
