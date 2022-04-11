@@ -7,10 +7,19 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 	{
 		Window wnd;
 		Canvas2D c2d (wnd);
-
+		int k = 100;
 		while (wnd.IsOpen())
 		{
+			for (auto i = k; i < k + 100; ++i)
+			{
+				for (auto j = k; j < k + 100; ++j)
+				{
+					c2d.DrawPixel(j, i, { 255 , 255 , 255 });
+				}
+			}
+			c2d.DrawOnWindow();
 			wnd.ProcessEvents();
+			++k;
 		}
 	}
 	catch (Window::Exception e)
