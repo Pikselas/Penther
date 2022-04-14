@@ -167,7 +167,7 @@ void Canvas2D::DrawPixel(unsigned x, unsigned y, ColorT color) const
 	PixelData[y * width + x] = color;
 }
 
-void Canvas2D::DrawImage(const std::wstring& file, unsigned int x, unsigned int y) const
+void Canvas2D::DrawImage(const std::wstring& file, int x, int y) const
 {
 	GDIPlusManager manager;
 	Gdiplus::Bitmap bitmap(file.c_str());
@@ -176,12 +176,19 @@ void Canvas2D::DrawImage(const std::wstring& file, unsigned int x, unsigned int 
 		Gdiplus::Color c;
 		const auto Imgheight = bitmap.GetHeight();
 		const auto Imgwidth = bitmap.GetWidth();
-		for (auto i = 0u , y_pos = y ; y_pos < height && i <  Imgheight; ++i , ++y_pos)
+
+		unsigned int imgX = 0 , screenX = 0;
+		unsigned int imgY = 0 , screenY = 0;
+
+		(x < 0 ? imgX : screenX) = abs(x);
+		(y < 0 ? imgY : screenY) = abs(y);
+
+		for ( ; imgY < Imgheight && screenY < height; ++imgY, ++screenY)
 		{
-			for (auto j = 0u , x_pos = x ; x_pos < width && j < Imgwidth; ++j , ++x_pos)
+			for (auto i = imgX, j = screenX; i < Imgwidth && j < width; ++i, ++j)
 			{
-				bitmap.GetPixel(j, i, &c);
-				DrawPixel(x_pos, y_pos, { c.GetB() , c.GetG() , c.GetR() });
+				bitmap.GetPixel(i, imgY, &c);
+				DrawPixel(j, screenY, { c.GetB() , c.GetG() , c.GetR() });
 			}
 		}
 	}
