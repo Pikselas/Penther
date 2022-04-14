@@ -43,7 +43,7 @@ public:
 	~Canvas2D();
 public:
 	void DrawPixel(unsigned x , unsigned y , ColorT color) const;
-	void DrawImage(const std::wstring& file) const;
+	void DrawImage(const std::wstring& file , unsigned int x = 0 ,unsigned int y = 0) const;
 	void Clear();
 	void DrawOnWindow();
 };

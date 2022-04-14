@@ -6,7 +6,7 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 	Window wnd;
 	Canvas2D cntx { wnd };
 	
-	//cntx.DrawImage(L"D:/CoderWallp/204.jpg");
+	cntx.DrawImage(L"D:/CoderWallp/204.jpg" , 100 , 100);
 
 
 	wnd.keyboard.OnKeyPress = [&](Window::KeyBoard::EventT ev) {
@@ -29,8 +29,8 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 
 	while (wnd.IsOpen())
 	{
-		cntx.DrawOnWindow();
 		wnd.ProcessEvents();
+		cntx.DrawOnWindow();
 	}
 	return 0;
 }
