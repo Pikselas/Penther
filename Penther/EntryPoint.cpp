@@ -3,47 +3,34 @@
 
 int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 {
-	try
-	{
-		Window wnd;
-		Canvas2D c2d(wnd);
+	Window wnd;
+	Canvas2D cntx { wnd };
+	
+	//cntx.DrawImage(L"D:/CoderWallp/204.jpg");
 
-		while (wnd.IsOpen())
+
+	wnd.keyboard.OnKeyPress = [&](Window::KeyBoard::EventT ev) {
+		if (ev.KEY_CODE == 'W')
 		{
-			if (wnd.mouse.IsLeftPressed())
-			{
-				const auto [x, y]  = wnd.mouse.GetXY();
-				for (int i = 0 ;i < 10; ++i)
-				{
-					for (int j = 0; j < 10; j++)
-					{
-						c2d.DrawPixel(x + j , y + i , {255 , 255 , 255});
-					}
-				}
-			}
-			c2d.DrawOnWindow();
-			wnd.ProcessEvents();
+			cntx.Clear();
 		}
-	}
-	catch (Canvas2D::Exception e)
+	};
+
+	wnd.mouse.OnMove = [&](Window&) {
+		if (wnd.mouse.IsLeftPressed())
+		{
+			auto[x, y] = wnd.mouse.GetXY();
+			const auto half = wnd.GetWidth() / 2;
+			auto x1 = x < half ? half + (half - x) : half - (x - half);
+			cntx.DrawPixel(x, y, { 255 , 255 , 255 });
+			cntx.DrawPixel(x1, y, { 255 , 255 , 255 });
+		}
+	};
+
+	while (wnd.IsOpen())
 	{
-		std::stringstream ss;
-		ss << "[[FILE]]" << " " << e.GetFile() << "\n"
-			<< "[[LINE]]" << " " << e.GetLine() << "\n"
-			<< "[[REASON]]" << " " << e.GetReason();
-		MessageBox(nullptr, ss.str().c_str(), "Window error", MB_ICONERROR);
-	}
-	catch (Window::Exception e)
-	{
-		std::stringstream ss;
-		ss << "[[FILE]]" << " " << e.GetFile() << "\n"
-			<< "[[LINE]]" << " " << e.GetLine() << "\n"
-			<< "[[REASON]]" << " " << e.GetReason();
-		MessageBox(nullptr, ss.str().c_str(), "Window error", MB_ICONERROR);
-	}
-	catch (std::exception e)
-	{
-		MessageBox(nullptr, e.what() , "standard error", MB_ICONERROR);
+		cntx.DrawOnWindow();
+		wnd.ProcessEvents();
 	}
 	return 0;
 }

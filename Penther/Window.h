@@ -106,9 +106,10 @@ class Window
 		Mouse mouse;
 		KeyBoard keyboard;
 	public:
-		Window();
-		Window(const std::string& name, int height, int width);
+		Window(const std::string& name = "Window", int width = 800, int height = 600);
 		~Window();
+		unsigned int GetHeight() const;
+		unsigned int GetWidth() const;
 		bool IsOpen() const;
 		void ChangeTitle(const std::string& title);
 		void ProcessEvents() const;

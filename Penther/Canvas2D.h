@@ -3,6 +3,8 @@
 #include<wrl.h>
 #include<d3dcompiler.h>
 #include"Window.h"
+#include"GDIPlusManager.h"
+
 class Canvas2D
 {
 private:
@@ -24,10 +26,10 @@ public:
 	class Exception :public Window::Exception {};
 	struct ColorT
 	{
-		unsigned char red;
-		unsigned char green;
 		unsigned char blue;
-		unsigned char alpha;
+		unsigned char green;
+		unsigned char red;
+		unsigned char alpha_maybe;
 	};
 	struct FSQVertex
 	{
@@ -40,6 +42,8 @@ public:
 	Canvas2D(const Window& window);
 	~Canvas2D();
 public:
-	void DrawPixel(unsigned x , unsigned y , ColorT color);
+	void DrawPixel(unsigned x , unsigned y , ColorT color) const;
+	void DrawImage(const std::wstring& file) const;
+	void Clear();
 	void DrawOnWindow();
 };

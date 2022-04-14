@@ -162,9 +162,34 @@ Canvas2D::~Canvas2D()
 	}
 }
 
-void Canvas2D::DrawPixel(unsigned x, unsigned y, ColorT color)
+void Canvas2D::DrawPixel(unsigned x, unsigned y, ColorT color) const
 {
 	PixelData[y * width + x] = color;
+}
+
+void Canvas2D::DrawImage(const std::wstring& file) const
+{
+	GDIPlusManager manager;
+	Gdiplus::Bitmap bitmap(file.c_str());
+	if (bitmap.GetLastStatus() == Gdiplus::Status::Ok)
+	{
+		Gdiplus::Color c;
+		const auto Imgheight = bitmap.GetHeight();
+		const auto Imgwidth = bitmap.GetWidth();
+		for (auto i = 0; i < height && i <  Imgheight; ++i)
+		{
+			for (auto j = 0; j < width && j < Imgwidth; ++j)
+			{
+				bitmap.GetPixel(j, i, &c);
+				DrawPixel(j, i, { c.GetB() , c.GetG() , c.GetR() });
+			}
+		}
+	}
+}
+
+void Canvas2D::Clear()
+{
+	memset(PixelData, 0,(sizeof(ColorT)) * width * height);
 }
 
 void Canvas2D::DrawOnWindow()

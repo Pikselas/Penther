@@ -148,9 +148,7 @@ LRESULT Window::MessageHandler(HWND handle, UINT msgcode, WPARAM wparam, LPARAM 
 	return DefWindowProc(handle , msgcode , wparam , lparam);
 }
 
-Window::Window() : Window("Window", 600 , 900 ){}
-
-Window::Window(const std::string& name, int height, int width) : name(name), height(height), width(width)
+Window::Window(const std::string& name, int width, int height) : name(name), height(height), width(width)
 {
 
 	RECT wr = {0};
@@ -181,6 +179,16 @@ Window::~Window()
 		Closed = true;
 		--WindowCount;
 	}
+}
+
+unsigned int Window::GetHeight() const
+{
+	return height;
+}
+
+unsigned int Window::GetWidth() const
+{
+	return width;
 }
 
 bool Window::IsOpen() const
