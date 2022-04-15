@@ -178,13 +178,6 @@ void Canvas2D::DrawImage(const Image2D& image, int x, int y) const
 	(x < 0 ? imgX : screenX) = abs(x);
 	(y < 0 ? imgY : screenY) = abs(y);
 
-	/*const auto TotalScreenSizeLeft = (height - screenY) * (width - screenX);
-	const auto TotalImageSizeLeft = (Imgheight - imgY) * (Imgwidth - imgX);
-
-	const size_t total = (TotalImageSizeLeft < TotalScreenSizeLeft ? TotalImageSizeLeft : TotalScreenSizeLeft);
-
-	memcpy(PixelData + (width * screenY + screenX), image.GetRaw() + (Imgheight * imgY + imgX), total);*/
-
 	for (; imgY < Imgheight && screenY < height; ++imgY, ++screenY)
 	{
 		for (auto i = imgX, j = screenX; i < Imgwidth && j < width; ++i, ++j)
