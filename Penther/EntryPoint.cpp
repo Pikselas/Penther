@@ -3,14 +3,10 @@
 
 int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 {
-	Window wnd;
+	Window wnd("wnd" , 900 , 600);
 	Canvas2D cntx { wnd };
-	
-	Image2D img(L"D:/CoderWallp/204.jpg");
 
-	cntx.DrawImage(img);
-
-	wnd.keyboard.EnableKeyRepeat();
+	Image2D img(L"C:/Users/Aritra Maji/Downloads/93428795_p0.png");
 
 	wnd.keyboard.OnKeyPress = [&](Window::KeyBoard::EventT ev) {
 		if (ev.KEY_CODE == 'C')
@@ -19,7 +15,23 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 		}
 	};
 
-	wnd.mouse.OnMove = [&](Window&) {
+	int x_pos = 0, y_pos = 0;
+	int img_xpos = 0, img_ypos = 0;
+
+	wnd.mouse.OnRightPress = [&](Window&) {
+	
+		x_pos = wnd.mouse.GetX();
+		y_pos = wnd.mouse.GetY();
+		
+	};
+
+	wnd.mouse.OnRightRelease = [&](Window&) {
+		
+		img_xpos +=  wnd.mouse.GetX() - x_pos;
+		img_ypos +=  wnd.mouse.GetY() - y_pos;
+	};
+
+	wnd.mouse.OnMove = [&](Window&) mutable {
 		if (wnd.mouse.IsLeftPressed())
 		{
 			auto[x, y] = wnd.mouse.GetXY();
@@ -28,27 +40,16 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 			cntx.DrawPixel(x, y, { 255 , 255 , 255 });
 			cntx.DrawPixel(x1, y, { 255 , 255 , 255 });
 		}
+		else if(wnd.mouse.IsRightPressed())
+		{
+			cntx.Clear();
+			cntx.DrawImage(img, img_xpos + wnd.mouse.GetX() - x_pos, img_ypos + wnd.mouse.GetY() - y_pos);
+		}
+		
 	};
 
-	wnd.keyboard.OnKeyPress = [&, x = 0, y = 0](Window::KeyBoard::EventT ev)  mutable {
-		switch (ev.KEY_CODE)
-		{
-		case 'W':
-			y -= 20;
-			break;
-		case 'A':
-			x -= 20;
-			break;
-		case 'S':
-			y += 20;
-			break;
-		case 'D':
-			x += 20;
-			break;
-		}
-		cntx.Clear();
-		cntx.DrawImage(img, x, y);
-	};
+
+	cntx.DrawImage(img);
 
 	while (wnd.IsOpen())
 	{

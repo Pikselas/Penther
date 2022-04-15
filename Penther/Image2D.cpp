@@ -37,6 +37,11 @@ ColorType Image2D::GetPixel(unsigned int x, unsigned int y) const
 	return PIXEL_DATA[width * y + x];
 }
 
+void Image2D::SetPixel(unsigned int x, unsigned int y, ColorType color)
+{
+	PIXEL_DATA[width * y + x] = color;
+}
+
 const ColorType* Image2D::GetRaw() const
 {
 	return PIXEL_DATA.get();

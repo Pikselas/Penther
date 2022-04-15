@@ -17,5 +17,6 @@ public:
 	size_t GetHeight() const;
 	size_t GetWidth() const;
 	ColorType GetPixel(unsigned int x , unsigned int y) const;
+	void SetPixel(unsigned int x, unsigned int y, ColorType color);
 	const ColorType* GetRaw() const;
 };
