@@ -162,11 +162,14 @@
     <ClCompile Include="Canvas2D.cpp" />
     <ClCompile Include="EntryPoint.cpp" />
     <ClCompile Include="GDIPlusManager.cpp" />
+    <ClCompile Include="Image2D.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Canvas2D.h" />
+    <ClInclude Include="ColorType.h" />
     <ClInclude Include="GDIPlusManager.h" />
+    <ClInclude Include="Image2D.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

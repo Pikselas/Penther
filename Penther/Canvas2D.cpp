@@ -43,7 +43,7 @@ Canvas2D::Canvas2D(const Window& window) : height(window.height) , width(window.
 	ImmediateContext->OMSetRenderTargets(1, RenderTargetView.GetAddressOf(), nullptr);
 
 	//creating viewport
-	D3D11_VIEWPORT vp;
+	D3D11_VIEWPORT vp = {};
 	vp.Width = float(width);
 	vp.Height = float(height);
 	vp.MinDepth = 0.0f;
@@ -141,8 +141,8 @@ Canvas2D::Canvas2D(const Window& window) : height(window.height) , width(window.
 	THROW_IF_FAILED(Device->CreateSamplerState(&sampDesc, &SamplerState));
 
 	// allocate memory for sysbuffer (16-byte aligned for faster access)
-	const size_t buffsize = sizeof(ColorT) * width * height;
-	PixelData = reinterpret_cast<ColorT*>(
+	const size_t buffsize = sizeof(ColorType) * width * height;
+	PixelData = reinterpret_cast<ColorType*>(
 		_aligned_malloc(buffsize, 16u));
 	if (PixelData)
 	{
@@ -162,41 +162,41 @@ Canvas2D::~Canvas2D()
 	}
 }
 
-void Canvas2D::DrawPixel(unsigned x, unsigned y, ColorT color) const
+void Canvas2D::DrawPixel(unsigned x, unsigned y, ColorType color) const
 {
 	PixelData[y * width + x] = color;
 }
 
-void Canvas2D::DrawImage(const std::wstring& file, int x, int y) const
+void Canvas2D::DrawImage(const Image2D& image, int x, int y) const
 {
-	GDIPlusManager manager;
-	Gdiplus::Bitmap bitmap(file.c_str());
-	if (bitmap.GetLastStatus() == Gdiplus::Status::Ok)
+	const auto Imgheight = image.GetHeight();
+	const auto Imgwidth = image.GetWidth();
+
+	unsigned int imgX = 0 , screenX = 0;
+	unsigned int imgY = 0 , screenY = 0;
+
+	(x < 0 ? imgX : screenX) = abs(x);
+	(y < 0 ? imgY : screenY) = abs(y);
+
+	/*const auto TotalScreenSizeLeft = (height - screenY) * (width - screenX);
+	const auto TotalImageSizeLeft = (Imgheight - imgY) * (Imgwidth - imgX);
+
+	const size_t total = (TotalImageSizeLeft < TotalScreenSizeLeft ? TotalImageSizeLeft : TotalScreenSizeLeft);
+
+	memcpy(PixelData + (width * screenY + screenX), image.GetRaw() + (Imgheight * imgY + imgX), total);*/
+
+	for (; imgY < Imgheight && screenY < height; ++imgY, ++screenY)
 	{
-		Gdiplus::Color c;
-		const auto Imgheight = bitmap.GetHeight();
-		const auto Imgwidth = bitmap.GetWidth();
-
-		unsigned int imgX = 0 , screenX = 0;
-		unsigned int imgY = 0 , screenY = 0;
-
-		(x < 0 ? imgX : screenX) = abs(x);
-		(y < 0 ? imgY : screenY) = abs(y);
-
-		for ( ; imgY < Imgheight && screenY < height; ++imgY, ++screenY)
+		for (auto i = imgX, j = screenX; i < Imgwidth && j < width; ++i, ++j)
 		{
-			for (auto i = imgX, j = screenX; i < Imgwidth && j < width; ++i, ++j)
-			{
-				bitmap.GetPixel(i, imgY, &c);
-				DrawPixel(j, screenY, { c.GetB() , c.GetG() , c.GetR() });
-			}
+			DrawPixel(j, screenY, image.GetPixel(i, imgY) );
 		}
 	}
 }
 
 void Canvas2D::Clear()
 {
-	memset(PixelData, 0,(sizeof(ColorT)) * width * height);
+	memset(PixelData, 0,(sizeof(ColorType)) * width * height);
 }
 
 void Canvas2D::DrawOnWindow()
@@ -206,10 +206,10 @@ void Canvas2D::DrawOnWindow()
 		D3D11_MAP_WRITE_DISCARD, 0u, &mappedSysBufferTexture));
 	
 	// setup parameters for copy operation
-	ColorT* pDst = reinterpret_cast<ColorT*>(mappedSysBufferTexture.pData);
-	const size_t dstPitch = mappedSysBufferTexture.RowPitch / sizeof(ColorT);
+	ColorType* pDst = reinterpret_cast<ColorType*>(mappedSysBufferTexture.pData);
+	const size_t dstPitch = mappedSysBufferTexture.RowPitch / sizeof(ColorType);
 	const size_t srcPitch = width;
-	const size_t rowBytes = srcPitch * sizeof(ColorT);
+	const size_t rowBytes = srcPitch * sizeof(ColorType);
 	// perform the copy line-by-line
 	for (size_t y = 0u; y < height; y++)
 	{
