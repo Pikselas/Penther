@@ -116,6 +116,8 @@ class Window
 	public:
 		constexpr static Window* ALL_WINDOWS = nullptr;
 	public:
+		void * UserSideDataPointer = nullptr;
+	public:
 		static void MainLoop(const Window* const window);
 		static void ProcessWindowEvents();
 		static int GetWindowCount();
