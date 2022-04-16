@@ -4,6 +4,12 @@
 #define Binder1(func , param) std::bind(func , param , std::placeholders::_1)
 #define Binder2(func , param1 , param2)  std::bind(func , param1 , param2 , std::placeholders::_1)
 
+template<typename funcT , typename ... argTs>
+auto Binder(funcT func, argTs ... args)
+{
+	return std::bind(func, args... , std::placeholders::_1);
+}
+
 struct POS_T
 {
 	int x_pos = 0, y_pos = 0;
@@ -70,20 +76,20 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 	wnd2.UserSideDataPointer = &pst2;
 	wnd3.UserSideDataPointer = &pst3;
 
-	wnd1.keyboard.OnKeyPress  =	Binder1(keyboardPress , std::ref(cntx1));
-	wnd1.mouse.OnRightPress   =	Binder1(MouseRightPress , std::ref(cntx1));
-	wnd1.mouse.OnRightRelease =	Binder1(MouseRightRelease, std::ref(cntx1));
-	wnd1.mouse.OnMove         =	Binder2(MouseMove, std::ref(cntx1), std::ref(img1));
+	wnd1.keyboard.OnKeyPress  =	Binder(keyboardPress , std::ref(cntx1));
+	wnd1.mouse.OnRightPress   =	Binder(MouseRightPress , std::ref(cntx1));
+	wnd1.mouse.OnRightRelease =	Binder(MouseRightRelease, std::ref(cntx1));
+	wnd1.mouse.OnMove         =	Binder(MouseMove, std::ref(cntx1), std::ref(img1));
 
-	wnd2.keyboard.OnKeyPress  = Binder1(keyboardPress, std::ref(cntx2));
-	wnd2.mouse.OnRightPress   = Binder1(MouseRightPress, std::ref(cntx2));
-	wnd2.mouse.OnRightRelease = Binder1(MouseRightRelease, std::ref(cntx2));
-	wnd2.mouse.OnMove		  = Binder2(MouseMove, std::ref(cntx2), std::ref(img2));
+	wnd2.keyboard.OnKeyPress  = Binder(keyboardPress, std::ref(cntx2));
+	wnd2.mouse.OnRightPress   = Binder(MouseRightPress, std::ref(cntx2));
+	wnd2.mouse.OnRightRelease = Binder(MouseRightRelease, std::ref(cntx2));
+	wnd2.mouse.OnMove		  = Binder(MouseMove, std::ref(cntx2), std::ref(img2));
 
-	wnd3.keyboard.OnKeyPress  = Binder1(keyboardPress, std::ref(cntx3));
-	wnd3.mouse.OnRightPress   = Binder1(MouseRightPress, std::ref(cntx3));
-	wnd3.mouse.OnRightRelease = Binder1(MouseRightRelease, std::ref(cntx3));
-	wnd3.mouse.OnMove	      = Binder2(MouseMove, std::ref(cntx3), std::ref(img3));
+	wnd3.keyboard.OnKeyPress  = Binder(keyboardPress, std::ref(cntx3));
+	wnd3.mouse.OnRightPress   = Binder(MouseRightPress, std::ref(cntx3));
+	wnd3.mouse.OnRightRelease = Binder(MouseRightRelease, std::ref(cntx3));
+	wnd3.mouse.OnMove	      = Binder(MouseMove, std::ref(cntx3), std::ref(img3));
 
 	cntx1.DrawImage(img1);
 	cntx2.DrawImage(img2);
