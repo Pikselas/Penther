@@ -57,23 +57,6 @@ Canvas3D::Canvas3D(const Window& wnd)
 	
 	ImmediateContext->IASetVertexBuffers(0u, 1u, VBuffer.GetAddressOf(), &stride, &offset);
 
-	Microsoft::WRL::ComPtr<ID3D11VertexShader> vS;
-	Microsoft::WRL::ComPtr<ID3DBlob> blb; 
-	D3DReadFileToBlob(L"VertexShader.cso", &blb); 
-	Device->CreateVertexShader(blb->GetBufferPointer(), blb->GetBufferSize(), nullptr, &vS); 
-	ImmediateContext->VSSetShader(vS.Get(), nullptr, 0u); 
-
-	Microsoft::WRL::ComPtr<ID3D11InputLayout> inpl;
-	
-
-	D3D11_INPUT_ELEMENT_DESC ied[] = {
-
-		{"POSITION",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-	};
-	
-	Device->CreateInputLayout(ied, (UINT)std::size(ied), blb->GetBufferPointer(), blb->GetBufferSize(), &inpl);
-	ImmediateContext->IASetInputLayout(inpl.Get());
-
 	ImmediateContext->OMSetRenderTargets(1u, RenderTarget.GetAddressOf(), nullptr);
 
 	D3D11_VIEWPORT vp = {};
