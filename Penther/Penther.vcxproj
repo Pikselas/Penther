@@ -172,9 +172,11 @@
     <ClInclude Include="ColorType.h" />
     <ClInclude Include="GDIPlusManager.h" />
     <ClInclude Include="Image2D.h" />
+    <ClInclude Include="ObjectBuffer.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="VertexShader.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>

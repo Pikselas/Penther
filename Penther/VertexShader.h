@@ -1,11 +1,12 @@
 #pragma once
 #include"Shader.h"
 #include<vector>
+#include<optional>
 
 struct InputElemDesc
 {
 public:
-	enum INPUT_FORMAT
+	enum class INPUT_FORMAT
 	{
 		FLOAT3 = DXGI_FORMAT_R32G32B32_FLOAT,
 		FLOAT4 = DXGI_FORMAT_R32G32B32A32_FLOAT,
@@ -22,7 +23,7 @@ class VertexShader : public Shader
  private:
 	 std::vector<D3D11_INPUT_ELEMENT_DESC> iedescs;
   public:
-	  VertexShader(const std::wstring& cso_file , const std::vector<InputElemDesc>& descs)
+	  VertexShader(const std::wstring& cso_file , const std::vector<InputElemDesc>& descs , std::optional<const ConstBufferDesc> cbuff_desc = {}) : Shader(cbuff_desc)
 	  {
 		  D3DReadFileToBlob(cso_file.c_str(), &shader_buffer);
 		  for (const auto& desc : descs)
@@ -39,7 +40,14 @@ class VertexShader : public Shader
 
 		  Microsoft::WRL::ComPtr<ID3D11InputLayout> inpl;
 
-		  Device.CreateInputLayout(iedescs.data(), iedescs.size(), shader_buffer->GetBufferPointer(), shader_buffer->GetBufferSize(), &inpl);
+		  Device.CreateInputLayout(iedescs.data(), (UINT)iedescs.size(), shader_buffer->GetBufferPointer(), shader_buffer->GetBufferSize(), &inpl);
 		  Context.IASetInputLayout(inpl.Get());
+
+		  if (CBUFF_DATA)
+		  {
+			  Microsoft::WRL::ComPtr<ID3D11Buffer> ConstBuff;
+			  Device.CreateBuffer(&CBUFF_DESC, &CBUFF_RES, &ConstBuff);
+			  Context.VSSetConstantBuffers(0u, 1u, ConstBuff.GetAddressOf());
+		  }
 	  }
 };

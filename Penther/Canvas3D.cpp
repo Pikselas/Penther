@@ -1,6 +1,6 @@
 #include "Canvas3D.h"
 
-Canvas3D::Canvas3D(const Window& wnd)
+Canvas3D::Canvas3D(const Window& wnd) : Halfheight(wnd.height / 2) , Halfwidth(wnd.width / 2)
 {
 
 	DXGI_SWAP_CHAIN_DESC sd = { 0 };
@@ -27,43 +27,13 @@ Canvas3D::Canvas3D(const Window& wnd)
 	SwapChain->GetBuffer(0, __uuidof(ID3D11Resource), &pBackBuffer);
 	Device->CreateRenderTargetView(pBackBuffer.Get(), nullptr, &RenderTarget);
 
-	struct VertexType
-	{
-		float x, y, z;
-	};
-
-	VertexType vertices[] = {
-		{0.0 , 0.5 , 0.0},
-		{0.5 , -0.5 , 0.0},
-		{-0.5 , -0.5 , 0.0}
-	};
-
-	D3D11_BUFFER_DESC bd = { 0 };
-	bd.ByteWidth = sizeof(vertices);					
-	bd.Usage = D3D11_USAGE_DEFAULT;				
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;	
-	bd.CPUAccessFlags = 0u;							
-	bd.MiscFlags = 0u;							
-	bd.StructureByteStride = sizeof(VertexType); 
-
-	
-	D3D11_SUBRESOURCE_DATA subd = { 0 };
-	subd.pSysMem = vertices;							
-
-	Microsoft::WRL::ComPtr<ID3D11Buffer> VBuffer;
-	Device->CreateBuffer(&bd, &subd, &VBuffer);
-	UINT stride = sizeof(VertexType);			
-	UINT offset = 0u;							
-	
-	ImmediateContext->IASetVertexBuffers(0u, 1u, VBuffer.GetAddressOf(), &stride, &offset);
-
 	ImmediateContext->OMSetRenderTargets(1u, RenderTarget.GetAddressOf(), nullptr);
 
 	D3D11_VIEWPORT vp = {};
 	vp.TopLeftX = 0;
 	vp.TopLeftY = 0;
-	vp.Width = wnd.width;  
-	vp.Height = wnd.height; 
+	vp.Width = (float)wnd.width;  
+	vp.Height = (float)wnd.height; 
 	vp.MaxDepth = 1; 
 	vp.MinDepth = 0;
 	ImmediateContext->RSSetViewports(1u, &vp);
@@ -77,8 +47,23 @@ void Canvas3D::SetShader(const Shader& shader) const
 	shader.Bind(*Device.Get(), *ImmediateContext.Get());
 }
 
-void Canvas3D::Draw()
+void Canvas3D::Draw(const ObjectBuffer& buffer)
 {
-	ImmediateContext->Draw(3u, 0u);
-	SwapChain->Present(1u , 0u);
+	buffer.Draw(*Device.Get(), *ImmediateContext.Get());
+}
+
+void Canvas3D::ClearCanvas() const
+{
+	float color[] = { 1.0f , 1.0f , 1.0f , 1.0f };
+	ImmediateContext->ClearRenderTargetView(RenderTarget.Get(), color);
+}
+
+void Canvas3D::PresentOnScreen() const
+{
+	SwapChain->Present(1u, 0u);
+}
+
+std::pair<float, float> Canvas3D::GetNormalizedWindowPos(int x, int y) const
+{
+	return { (x / Halfwidth ) - 1.0f,  - ((y / Halfheight ) - 1.0f)};
 }
