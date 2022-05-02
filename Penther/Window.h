@@ -7,10 +7,12 @@
 #include"resource.h"
 
 class Canvas2D;
+class Canvas3D;
 
 class Window
 {
 	friend class Canvas2D;
+	friend class Canvas3D;
 	private:
 		class WindowClass
 		{
