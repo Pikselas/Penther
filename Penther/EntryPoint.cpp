@@ -4,9 +4,11 @@
 #include"PixelShader.h"
 #include"Triangle.h"
 
+#include<chrono>
+
 int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 {
-	Window wnd;
+	Window wnd("Window" , 900 , 700);
 	Canvas3D c3d(wnd);
 
 	DirectX::XMMATRIX transform = DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(90));
@@ -20,18 +22,33 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 		
 		} , cbuff ));
 
-
-
 	c3d.SetShader(PixelShader(c3d , L"PixelShader.cso"));
 
-	Triangle t(0.0f , 0.0f);
-	Triangle t2(0.5f, 0.5f);
+	Triangle t1;
+	Triangle t2;
+
+	auto t = std::chrono::system_clock::now();
+	std::chrono::duration<float> dp;
+
 
 	while (Window::GetWindowCount())
 	{
 		c3d.ClearCanvas();
-		c3d.Draw(t);
-		c3d.Draw(t2);
+		auto angle = dp.count();
+		dp = std::chrono::system_clock::now() - t;
+		
+		transform = DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(angle) * DirectX::XMMatrixRotationX(angle) * DirectX::XMMatrixRotationY(angle) * DirectX::XMMatrixTranslation(0.0, 0.0, 4.0f)
+			* DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5, 10.0f));
+
+		cbuff.Update(&transform, sizeof(transform));
+		c3d.Draw(t1);
+
+		transform = DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(-angle) * DirectX::XMMatrixRotationX(-angle) * DirectX::XMMatrixRotationY(-angle) * DirectX::XMMatrixTranslation(0.0, 0.0, 7.0f)
+			* DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.8, 10.0f));
+
+		cbuff.Update(&transform, sizeof(transform));
+		c3d.Draw(t1);
+
 		c3d.PresentOnScreen();
 		Window::ProcessWindowEvents();
 	}

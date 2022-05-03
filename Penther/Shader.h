@@ -44,8 +44,9 @@ class CBuffer
 	friend Shader<Canvas3D>;
 private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> BUFFER;
+	const Canvas3D& canvas;
 public:
-	CBuffer(const Canvas3D& c3d, void* MEM_LOCATION, unsigned int LENGTH_IN_BYTES)
+	CBuffer(const Canvas3D& c3d, void* MEM_LOCATION, unsigned int LENGTH_IN_BYTES) : canvas(c3d)
 	{
 		D3D11_BUFFER_DESC CBUFF_DESC = { 0 };
 		D3D11_SUBRESOURCE_DATA CBUFF_RES = { 0 };
@@ -57,5 +58,12 @@ public:
 		CBUFF_RES.pSysMem = MEM_LOCATION;
 
 		c3d.Device->CreateBuffer(&CBUFF_DESC, &CBUFF_RES, &BUFFER);
+	}
+	void Update(void* MEM_LOCATION, unsigned int LENGTH_IN_BYTES)
+	{
+		D3D11_MAPPED_SUBRESOURCE ms;
+		canvas.ImmediateContext->Map(BUFFER.Get(), 0u, D3D11_MAP_WRITE_DISCARD, 0u, &ms);
+		std::memcpy(ms.pData, MEM_LOCATION, LENGTH_IN_BYTES);
+		canvas.ImmediateContext->Unmap(BUFFER.Get(), 0u);
 	}
 };
