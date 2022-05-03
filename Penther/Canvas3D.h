@@ -11,7 +11,9 @@ class Canvas3D
 {
 	template<typename t>
 	using PtrManager = Microsoft::WRL::ComPtr<t>;
-	
+	using ShaderType = Shader<Canvas3D>;
+	friend ShaderType;
+	friend CBuffer<Canvas3D>;
 	private:
 		PtrManager<ID3D11Device> Device;
 		PtrManager<IDXGISwapChain> SwapChain;
@@ -25,8 +27,11 @@ class Canvas3D
 		Canvas3D(const Window& wnd);
 	public:
 		std::pair<float, float> GetNormalizedWindowPos(int x , int y) const;
-		void SetShader(const Shader& shader) const;
+		void SetShader(const ShaderType& shader) const;
 		void ClearCanvas() const;
 		void PresentOnScreen() const;
 	    void Draw(const ObjectBuffer& buffer);
 };
+
+
+using ConstantBuffer = CBuffer<Canvas3D>;

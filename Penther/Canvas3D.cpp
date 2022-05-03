@@ -42,9 +42,9 @@ Canvas3D::Canvas3D(const Window& wnd) : Halfheight(wnd.height / 2) , Halfwidth(w
 
 }
 
-void Canvas3D::SetShader(const Shader& shader) const
+void Canvas3D::SetShader(const ShaderType& shader) const
 {
-	shader.Bind(*Device.Get(), *ImmediateContext.Get());
+	shader.Bind(*this);
 }
 
 void Canvas3D::Draw(const ObjectBuffer& buffer)

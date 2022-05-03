@@ -1,7 +1,8 @@
 #pragma once
-#include"Shader.h"
 #include<vector>
 #include<optional>
+
+#include"Canvas3D.h"
 
 struct InputElemDesc
 {
@@ -18,36 +19,35 @@ public:
 	unsigned int OFFSET;
 };
 
-class VertexShader : public Shader
+class VertexShader : public Shader<Canvas3D>
 {
  private:
-	 std::vector<D3D11_INPUT_ELEMENT_DESC> iedescs;
+	 Microsoft::WRL::ComPtr<ID3D11VertexShader> SHADER;
+	 Microsoft::WRL::ComPtr<ID3D11InputLayout> INPUT_LAYOUT;
   public:
-	  VertexShader(const std::wstring& cso_file , const std::vector<InputElemDesc>& descs , std::optional<const ConstBufferDesc> cbuff_desc = {}) : Shader(cbuff_desc)
+	  VertexShader(const Canvas3D& c3d , const std::wstring& cso_file , const std::vector<InputElemDesc>& descs , std::optional<ConstantBuffer> c_buffer = {}) : Shader(c_buffer)
 	  {
+		  Microsoft::WRL::ComPtr<ID3DBlob> shader_buffer;
 		  D3DReadFileToBlob(cso_file.c_str(), &shader_buffer);
+		  std::vector<D3D11_INPUT_ELEMENT_DESC> iedescs;
 		  for (const auto& desc : descs)
 		  {
 			  iedescs.emplace_back(desc.SEMANTIC_NAME.c_str() , 0 , static_cast<DXGI_FORMAT>(desc.FORMAT) , 0 , desc.OFFSET , D3D11_INPUT_PER_VERTEX_DATA , 0);
 		  }
+		  GetDevice(c3d).CreateVertexShader(shader_buffer->GetBufferPointer(), shader_buffer->GetBufferSize(), nullptr, &SHADER);
+		  GetDevice(c3d).CreateInputLayout(iedescs.data(), (UINT)iedescs.size(), shader_buffer->GetBufferPointer(), shader_buffer->GetBufferSize(), &INPUT_LAYOUT);
 	  }
   public:
-	  void Bind(ID3D11Device& Device, ID3D11DeviceContext& Context) const override
+	  void Bind(const Canvas3D& c3d) const override
 	  {
-		  Microsoft::WRL::ComPtr<ID3D11VertexShader> shader;
-		  Device.CreateVertexShader(shader_buffer->GetBufferPointer(), shader_buffer->GetBufferSize(), nullptr, &shader);
-		  Context.VSSetShader(shader.Get(), nullptr, 0u);
+		  auto& Context = GetContext(c3d);
+		  Context.VSSetShader(SHADER.Get(), nullptr, 0u);
+		  Context.IASetInputLayout(INPUT_LAYOUT.Get());
 
-		  Microsoft::WRL::ComPtr<ID3D11InputLayout> inpl;
-
-		  Device.CreateInputLayout(iedescs.data(), (UINT)iedescs.size(), shader_buffer->GetBufferPointer(), shader_buffer->GetBufferSize(), &inpl);
-		  Context.IASetInputLayout(inpl.Get());
-
-		  if (CBUFF_DATA)
+		  if (C_BUFFER)
 		  {
-			  Microsoft::WRL::ComPtr<ID3D11Buffer> ConstBuff;
-			  Device.CreateBuffer(&CBUFF_DESC, &CBUFF_RES, &ConstBuff);
-			  Context.VSSetConstantBuffers(0u, 1u, ConstBuff.GetAddressOf());
+			  Context.VSSetConstantBuffers(0u , 1u , C_BUFFER->GetAddressOf());
 		  }
+
 	  }
 };
