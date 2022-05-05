@@ -12,8 +12,10 @@ class Canvas3D
 	template<typename t>
 	using PtrManager = Microsoft::WRL::ComPtr<t>;
 	using ShaderType = Shader<Canvas3D>;
+	using DrawableObject = ObjectBuffer<Canvas3D>;
 	friend ShaderType;
 	friend CBuffer<Canvas3D>;
+	friend ObjectBuffer<Canvas3D>;
 	private:
 		PtrManager<ID3D11Device> Device;
 		PtrManager<IDXGISwapChain> SwapChain;
@@ -30,7 +32,7 @@ class Canvas3D
 		void SetShader(const ShaderType& shader) const;
 		void ClearCanvas() const;
 		void PresentOnScreen() const;
-	    void Draw(const ObjectBuffer& buffer);
+	    void Draw(const DrawableObject& buffer);
 };
 
 

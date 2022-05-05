@@ -83,7 +83,7 @@
     <ClInclude Include="ObjectBuffer.h">
       <Filter>3D\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Triangle.h">
+    <ClInclude Include="Cube.h">
       <Filter>3D\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

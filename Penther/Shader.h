@@ -32,10 +32,6 @@ class Shader
 	 {
 		 return *(canvas.ImmediateContext.Get());
 	 }
-	 /*static Microsoft::WRL::ComPtr<ID3D11Buffer>& GetConstBuffer(const CBuffer<Canvas3D>& buffer)
-	 {
-		 return buffer.BUFFER;
-	 }*/
 };
 
 template<class Canvas3D>

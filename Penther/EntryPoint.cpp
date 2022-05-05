@@ -2,7 +2,7 @@
 #include"Canvas3D.h"
 #include"VertexShader.h"
 #include"PixelShader.h"
-#include"Triangle.h"
+#include"Cube.h"
 
 #include<chrono>
 
@@ -11,8 +11,7 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 	Window wnd("Window" , 900 , 700);
 	Canvas3D c3d(wnd);
 
-	DirectX::XMMATRIX transform = DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(90));
-
+	DirectX::XMMATRIX transform;
 	ConstantBuffer cbuff(c3d , &transform, sizeof(transform));
 
 	c3d.SetShader(VertexShader( c3d,L"VertexShader.cso", { 
@@ -24,31 +23,57 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 
 	c3d.SetShader(PixelShader(c3d , L"PixelShader.cso"));
 
-	Triangle t1;
-	Triangle t2;
+
+	std::vector<Cube> tgs;
+
+	for (auto i = 0; i < 100; ++i)
+	{
+		tgs.emplace_back(c3d);
+	}
+
+	float Near = 0.5f;
+	float Far = 40.0f;
+
+	wnd.keyboard.EnableKeyRepeat();
+
+	wnd.keyboard.OnKeyPress = [&](Window::KeyBoard::EventT ent) {
+		
+		if (ent.KEY_CODE == 'W')
+		{
+			Near += 0.05f;
+			Far += 0.05f;
+			if (Near >= 40.0f)
+			{
+				Near = 40.0f;
+				Far = 75.5f;
+			}
+		}
+		else if (ent.KEY_CODE == 'S')
+		{
+			Near -= 0.05f;
+			Far -= 0.05f;
+			if (Near <= 0.1f)
+			{
+				Near = 0.1f;
+				Far = 39.6f;
+			}
+		}
+	
+	};
 
 	auto t = std::chrono::system_clock::now();
 	std::chrono::duration<float> dp;
 
-
 	while (Window::GetWindowCount())
 	{
 		c3d.ClearCanvas();
-		auto angle = dp.count();
 		dp = std::chrono::system_clock::now() - t;
-		
-		transform = DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(angle) * DirectX::XMMatrixRotationX(angle) * DirectX::XMMatrixRotationY(angle) * DirectX::XMMatrixTranslation(0.0, 0.0, 4.0f)
-			* DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5, 10.0f));
-
-		cbuff.Update(&transform, sizeof(transform));
-		c3d.Draw(t1);
-
-		transform = DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationZ(-angle) * DirectX::XMMatrixRotationX(-angle) * DirectX::XMMatrixRotationY(-angle) * DirectX::XMMatrixTranslation(0.0, 0.0, 7.0f)
-			* DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.8, 10.0f));
-
-		cbuff.Update(&transform, sizeof(transform));
-		c3d.Draw(t1);
-
+		for (auto& t : tgs)
+		{
+			auto mtrx =  DirectX::XMMatrixTranspose(t.Update(dp.count()) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, Near , Far));
+			cbuff.Update(&mtrx, sizeof(mtrx));
+			c3d.Draw(t);
+		}
 		c3d.PresentOnScreen();
 		Window::ProcessWindowEvents();
 	}
