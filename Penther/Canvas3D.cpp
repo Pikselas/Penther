@@ -72,9 +72,9 @@ Canvas3D::Canvas3D(const Window& wnd) : Halfheight(wnd.height / 2) , Halfwidth(w
 	ImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
-void Canvas3D::SetShader(const ShaderType& shader) const
+void Canvas3D::SetShader(const Shader& shader) const
 {
-	shader.Bind(*this);
+	shader.Bind(*ImmediateContext.Get());
 }
 
 void Canvas3D::Draw(const DrawableObject& buffer)

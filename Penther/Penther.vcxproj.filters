@@ -48,6 +48,9 @@
     <ClCompile Include="Canvas3D.cpp">
       <Filter>3D\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>3D\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h">
@@ -86,6 +89,18 @@
     <ClInclude Include="Cube.h">
       <Filter>3D\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>3D\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CanvasAccesser.h">
+      <Filter>3D\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>3D\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Paper.h">
+      <Filter>3D\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Penther.rc">
@@ -108,6 +123,12 @@
       <Filter>3D\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
+      <Filter>3D\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="VertexShaderTex.hlsl">
+      <Filter>3D\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PixelShaderTex.hlsl">
       <Filter>3D\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

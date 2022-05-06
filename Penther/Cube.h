@@ -23,12 +23,6 @@ private:
 public:
 	Cube(const Canvas3D& c3d)
 	{
-
-		std::mt19937 engine{ std::random_device{}() };
-		std::uniform_real_distribution<float> rdist(-1.0f, 1.0f);
-		std::uniform_real_distribution<float> r2dist(2.0f, 20.0);
-		std::uniform_real_distribution colorDist(0.0f, 1.0f);
-
 		p_roll = rdist(engine);
 		p_pitch = rdist(engine);
 		p_yaw = rdist(engine);

@@ -3,12 +3,14 @@
 #include<optional>
 
 #include"Canvas3D.h"
+#include"CanvasAccesser.h"
 
 struct InputElemDesc
 {
 public:
 	enum class INPUT_FORMAT
 	{
+		FLOAT2 = DXGI_FORMAT_R32G32_FLOAT,
 		FLOAT3 = DXGI_FORMAT_R32G32B32_FLOAT,
 		FLOAT4 = DXGI_FORMAT_R32G32B32A32_FLOAT,
 		UINT4 = DXGI_FORMAT_R8G8B8A8_UNORM
@@ -19,7 +21,7 @@ public:
 	unsigned int OFFSET;
 };
 
-class VertexShader : public Shader<Canvas3D>
+class VertexShader : public Shader , CanvasAccesser<Canvas3D>
 {
  private:
 	 Microsoft::WRL::ComPtr<ID3D11VertexShader> SHADER;
@@ -38,9 +40,8 @@ class VertexShader : public Shader<Canvas3D>
 		  GetDevice(c3d).CreateInputLayout(iedescs.data(), (UINT)iedescs.size(), shader_buffer->GetBufferPointer(), shader_buffer->GetBufferSize(), &INPUT_LAYOUT);
 	  }
   public:
-	  void Bind(const Canvas3D& c3d) const override
+	  void Bind(ID3D11DeviceContext& Context) const override
 	  {
-		  auto& Context = GetContext(c3d);
 		  Context.VSSetShader(SHADER.Get(), nullptr, 0u);
 		  Context.IASetInputLayout(INPUT_LAYOUT.Get());
 
