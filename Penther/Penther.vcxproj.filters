@@ -101,6 +101,9 @@
     <ClInclude Include="Paper.h">
       <Filter>3D\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TexturedCube.h">
+      <Filter>3D\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Penther.rc">

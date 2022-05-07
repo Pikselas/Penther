@@ -4,6 +4,7 @@
 #include"PixelShader.h"
 #include"Cube.h"
 #include"Paper.h"
+#include"TexturedCube.h"
 
 #include<chrono>
 
@@ -12,8 +13,9 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 	Window wnd("Window" , 900 , 700 );
 	Canvas3D c3d(wnd);
 
-	DirectX::XMMATRIX transform;
+	DirectX::XMMATRIX transform = DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0.0f, 0.0f , 5.0f) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 20.0f));
 	ConstantBuffer cbuff(c3d , &transform, sizeof(transform));
+	cbuff.Update(&transform , sizeof(transform));
 	
 	VertexShader cubeVShader(c3d, L"VertexShader.cso", {
 
@@ -36,74 +38,44 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 
 	paperPShader.SetTexture(tex1);
 
+	c3d.SetShader(paperVShader);
+	c3d.SetShader(paperPShader);
 
-	std::vector<Cube> tgs;
-	std::vector<Paper> pips;
+	TexturedCube tc(c3d);
 
-	for (auto i = 0; i < 100; ++i)
-	{
-		tgs.emplace_back(c3d);
-		pips.emplace_back(c3d);
-	}
 
-	float Near = 0.5f;
-	float Far = 40.0f;
-
+	float x = 0.0f , y = 0.0f , z = 0.0f;
 	wnd.keyboard.EnableKeyRepeat();
+	wnd.keyboard.OnKeyPress = [&](Window::KeyBoard::EventT evnt) {
 
-	wnd.keyboard.OnKeyPress = [&](Window::KeyBoard::EventT ent) {
-		
-		if (ent.KEY_CODE == 'W')
+		switch (evnt.KEY_CODE)
 		{
-			Near += 0.05f;
-			Far += 0.05f;
-			if (Near >= 40.0f)
-			{
-				Near = 40.0f;
-				Far = 75.5f;
-			}
+		case 'W':
+			x += 0.05;
+			break;
+		case 'S':
+			x -= 0.05;
+			break;
+		case 'A':
+			y += 0.05;
+			break;
+		case 'D':
+			y -= 0.05;
 		}
-		else if (ent.KEY_CODE == 'S')
-		{
-			Near -= 0.05f;
-			Far -= 0.05f;
-			if (Near <= 0.1f)
-			{
-				Near = 0.1f;
-				Far = 39.6f;
-			}
-		}
+		auto mtrx = DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationRollPitchYaw(x, y, z) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 5.0f) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 20.0f));
+		cbuff.Update(&mtrx, sizeof(mtrx));
 	
 	};
 
-	auto t = std::chrono::system_clock::now();
-	std::chrono::duration<float> dp;
 
-	while (Window::GetWindowCount())
+	while (wnd.IsOpen())
 	{
 		c3d.ClearCanvas();
-		
-		dp = std::chrono::system_clock::now() - t;
-		
-		for (auto i = 0 ; i < 100 ; ++i)
-		{
-			c3d.SetShader(cubeVShader);
-			c3d.SetShader(CubePShader);
 
-			auto mtrx =  DirectX::XMMatrixTranspose(tgs[i].Update(dp.count()) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, Near, Far));
-			cbuff.Update(&mtrx, sizeof(mtrx));
-			c3d.Draw(tgs[i]);
+		c3d.Draw(tc);
 
-			c3d.SetShader(paperVShader);
-			c3d.SetShader(paperPShader);
-
-			mtrx = DirectX::XMMatrixTranspose(pips[i].Update(dp.count()) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, Near, Far) );
-			cbuff.Update(&mtrx, sizeof(mtrx));
-			c3d.Draw(pips[i]);
-		}
-		
 		c3d.PresentOnScreen();
-		Window::ProcessWindowEvents();
+		wnd.ProcessEvents();
 	}
 	return 0;
 }

@@ -182,6 +182,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="TexturedCube.h" />
     <ClInclude Include="VertexShader.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
