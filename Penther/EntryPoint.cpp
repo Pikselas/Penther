@@ -13,67 +13,114 @@ int WINAPI wWinMain(_In_ HINSTANCE,_In_opt_ HINSTANCE ,_In_ LPWSTR,_In_ int)
 	Window wnd("Window" , 900 , 700 );
 	Canvas3D c3d(wnd);
 
-	DirectX::XMMATRIX transform = DirectX::XMMatrixTranspose(DirectX::XMMatrixTranslation(0.0f, 0.0f , 5.0f) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 20.0f));
+	DirectX::XMMATRIX transform;
 	ConstantBuffer cbuff(c3d , &transform, sizeof(transform));
-	cbuff.Update(&transform , sizeof(transform));
-	
-	VertexShader cubeVShader(c3d, L"VertexShader.cso", {
 
-		{InputElemDesc::INPUT_FORMAT::FLOAT3 , "POSITION" , 0} ,
-		{InputElemDesc::INPUT_FORMAT::FLOAT3 , "COLOR" , 12u}
-
-		} , cbuff);
-	PixelShader CubePShader (c3d , L"PixelShader.cso");
-
-	VertexShader paperVShader(c3d, L"VertexShaderTex.cso",{
+	VertexShader TextureVShader(c3d, L"VertexShaderTex.cso",{
 		
 		{InputElemDesc::INPUT_FORMAT::FLOAT3 , "POSITION" , 0},
 		{InputElemDesc::INPUT_FORMAT::FLOAT2 , "TEXCOORD" , 12u}
 		
 		}, cbuff);
-	PixelShader paperPShader(c3d, L"PixelShaderTex.cso");
+	PixelShader TexturePShader(c3d, L"PixelShaderTex.cso");
 
-	Image2D img1(L"D:/CoderWallp/656567.jpg");
-	Texture tex1(c3d , img1);
+	std::vector<Texture> textures;
+	textures.reserve(5);
+	textures.emplace_back(c3d, Image2D(L"D:/Textures/1.jpg"));
+	textures.emplace_back(c3d, Image2D(L"D:/Textures/2.jpg"));
+	textures.emplace_back(c3d, Image2D(L"D:/Textures/3.jpg"));
+	textures.emplace_back(c3d, Image2D(L"D:/Textures/4.jpg"));
+	textures.emplace_back(c3d, Image2D(L"D:/Textures/5.jpg"));
 
-	paperPShader.SetTexture(tex1);
+	c3d.SetShader(TextureVShader);
 
-	c3d.SetShader(paperVShader);
-	c3d.SetShader(paperPShader);
+	std::vector<TexturedCube> tc;
+	tc.reserve(100);
 
-	TexturedCube tc(c3d);
+	for (auto i = 0; i < 100; ++i)
+	{
+		tc.emplace_back(c3d);
+	}
 
-
-	float x = 0.0f , y = 0.0f , z = 0.0f;
-	wnd.keyboard.EnableKeyRepeat();
-	wnd.keyboard.OnKeyPress = [&](Window::KeyBoard::EventT evnt) {
-
-		switch (evnt.KEY_CODE)
-		{
-		case 'W':
-			x += 0.05;
-			break;
-		case 'S':
-			x -= 0.05;
-			break;
-		case 'A':
-			y += 0.05;
-			break;
-		case 'D':
-			y -= 0.05;
-		}
-		auto mtrx = DirectX::XMMatrixTranspose(DirectX::XMMatrixRotationRollPitchYaw(x, y, z) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 5.0f) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 20.0f));
-		cbuff.Update(&mtrx, sizeof(mtrx));
+	using clock = std::chrono::system_clock;
 	
-	};
+	clock::time_point tp = clock::now();
+	std::chrono::duration<float> d;
 
+	TexturePShader.SetTexture(textures[3]);
+	c3d.SetShader(TexturePShader);
+
+	int BoxPerTex = tc.size() / textures.size();
+
+	float Near = 0.5f;
+	float Far = 40.0f;
+
+	float X_pos = 0.0f;
+	float Y_pos = 0.0f;
+
+	wnd.keyboard.EnableKeyRepeat();
+
+	wnd.keyboard.OnKeyPress = [&](Window::KeyBoard::EventT ent) {
+
+		if (ent.KEY_CODE == 'W')
+		{
+			Near += 0.05f;
+			Far += 0.05f;
+			if (Near >= 40.0f)
+			{
+				Near = 40.0f;
+				Far = 75.5f;
+			}
+		}
+		else if (ent.KEY_CODE == 'S')
+		{
+			Near -= 0.05f;
+			Far -= 0.05f;
+			if (Near <= 0.1f)
+			{
+				Near = 0.1f;
+				Far = 39.6f;
+			}
+		}
+		else if (ent.KEY_CODE == 'X')
+		{
+			X_pos += 0.05f;
+		}
+		else if (ent.KEY_CODE == 'C')
+		{
+			X_pos -= 0.05f;
+		}
+		else if (ent.KEY_CODE == 'V')
+		{
+			Y_pos += 0.05f;
+		}
+		else if (ent.KEY_CODE == 'B')
+		{
+			Y_pos -= 0.05f;
+		}
+
+	};
 
 	while (wnd.IsOpen())
 	{
 		c3d.ClearCanvas();
 
-		c3d.Draw(tc);
+		d = clock::now() - tp;
+		auto tm = d.count();
+		
+		for (auto i = 0 , j = 0; i < tc.size(); i += BoxPerTex , ++j )
+		{
+			TexturePShader.SetTexture(textures[j]);
+			c3d.SetShader(TexturePShader);
 
+			for (auto k = 0; k < BoxPerTex; ++k)
+			{
+				transform = DirectX::XMMatrixTranspose(tc[i + k].Update(tm) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, Near, Far) * DirectX::XMMatrixTranslation(X_pos , Y_pos , 0.0f));
+				cbuff.Update(&transform, sizeof(transform));
+
+				c3d.Draw(tc[i + k]);
+			}
+		}
 		c3d.PresentOnScreen();
 		wnd.ProcessEvents();
 	}
