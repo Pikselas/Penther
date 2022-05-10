@@ -5,7 +5,7 @@
 
 class PixelShader;
 
-class Texture : CanvasAccesser<Canvas3D>
+class Texture : CanvasAccesser
 {
 	friend PixelShader;
 private:

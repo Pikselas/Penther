@@ -2,7 +2,7 @@
 #include"Canvas3D.h"
 #include"CanvasAccesser.h"
 
-class ConstantBuffer : CanvasAccesser<Canvas3D>
+class ConstantBuffer : CanvasAccesser
 {
 	friend class Shader;
 private:

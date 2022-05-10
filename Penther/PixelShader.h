@@ -3,7 +3,7 @@
 #include"CanvasAccesser.h"
 #include"Texture.h"
 
-class PixelShader : public Shader , CanvasAccesser<Canvas3D>
+class PixelShader : public Shader , CanvasAccesser
 {
  private:
 	 Microsoft::WRL::ComPtr<ID3D11PixelShader> SHADER;

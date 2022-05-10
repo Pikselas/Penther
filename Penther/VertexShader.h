@@ -21,7 +21,7 @@ public:
 	unsigned int OFFSET;
 };
 
-class VertexShader : public Shader , CanvasAccesser<Canvas3D>
+class VertexShader : public Shader , CanvasAccesser
 {
  private:
 	 Microsoft::WRL::ComPtr<ID3D11VertexShader> SHADER;

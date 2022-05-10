@@ -7,7 +7,6 @@
 #include"Shader.h"
 #include"ObjectBuffer.h"
 
-template<class CanvasType>
 class CanvasAccesser;
 
 class Canvas3D
@@ -16,7 +15,7 @@ class Canvas3D
 	using PtrManager = Microsoft::WRL::ComPtr<t>;
 	using DrawableObject = ObjectBuffer<Canvas3D>;
 	friend ObjectBuffer<Canvas3D>;
-	friend CanvasAccesser<Canvas3D>;
+	friend CanvasAccesser;
 	private:
 		PtrManager<ID3D11Device> Device;
 		PtrManager<IDXGISwapChain> SwapChain;
