@@ -171,6 +171,7 @@
     <ClInclude Include="Canvas2D.h" />
     <ClInclude Include="Canvas3D.h" />
     <ClInclude Include="CanvasAccesser.h" />
+    <ClInclude Include="CanvasFunc.h" />
     <ClInclude Include="ColorType.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="GDIPlusManager.h" />

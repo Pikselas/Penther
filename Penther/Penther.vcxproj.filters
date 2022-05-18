@@ -16,16 +16,16 @@
     <Filter Include="shaders">
       <UniqueIdentifier>{ae51c7c8-6624-49d3-b6cd-8d048b805d7e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3D">
+    <Filter Include="Header Files\3D">
       <UniqueIdentifier>{ce4248c7-65c1-4e39-bcdb-a7c9d3ce2756}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3D\Shaders">
+    <Filter Include="Header Files\3D\Shaders">
       <UniqueIdentifier>{f48b8243-8529-4113-b43b-5204d8bef5e4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3D\Header Files">
+    <Filter Include="Header Files\3D\Header Files">
       <UniqueIdentifier>{e025d607-7d59-4ac1-a648-bc95c90b2e81}</UniqueIdentifier>
     </Filter>
-    <Filter Include="3D\Source Files">
+    <Filter Include="Header Files\3D\Source Files">
       <UniqueIdentifier>{b0819f8f-e930-4db8-ba48-7f47c7ff770d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -46,10 +46,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Canvas3D.cpp">
-      <Filter>3D\Source Files</Filter>
+      <Filter>Header Files\3D\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>3D\Source Files</Filter>
+      <Filter>Header Files\3D\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -72,37 +72,40 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Canvas3D.h">
-      <Filter>3D\Header Files</Filter>
+      <Filter>Header Files\3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
-      <Filter>3D\Header Files</Filter>
+      <Filter>Header Files\3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VertexShader.h">
-      <Filter>3D\Header Files</Filter>
+      <Filter>Header Files\3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PixelShader.h">
-      <Filter>3D\Header Files</Filter>
+      <Filter>Header Files\3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjectBuffer.h">
-      <Filter>3D\Header Files</Filter>
+      <Filter>Header Files\3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Cube.h">
-      <Filter>3D\Header Files</Filter>
+      <Filter>Header Files\3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>3D\Header Files</Filter>
+      <Filter>Header Files\3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CanvasAccesser.h">
-      <Filter>3D\Header Files</Filter>
+      <Filter>Header Files\3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ConstantBuffer.h">
-      <Filter>3D\Header Files</Filter>
+      <Filter>Header Files\3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Paper.h">
-      <Filter>3D\Header Files</Filter>
+      <Filter>Header Files\3D\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TexturedCube.h">
-      <Filter>3D\Header Files</Filter>
+      <Filter>Header Files\3D\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CanvasFunc.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -123,16 +126,16 @@
       <Filter>shaders</Filter>
     </FxCompile>
     <FxCompile Include="VertexShader.hlsl">
-      <Filter>3D\Shaders</Filter>
+      <Filter>Header Files\3D\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
-      <Filter>3D\Shaders</Filter>
+      <Filter>Header Files\3D\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="VertexShaderTex.hlsl">
-      <Filter>3D\Shaders</Filter>
+      <Filter>Header Files\3D\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PixelShaderTex.hlsl">
-      <Filter>3D\Shaders</Filter>
+      <Filter>Header Files\3D\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
