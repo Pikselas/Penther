@@ -39,7 +39,7 @@ public:
 	DirectX::XMMATRIX Update(float dt)
 	{
 		using namespace DirectX;
-		return (XMMatrixRotationRollPitchYaw(p_roll * dt, p_pitch * dt, p_yaw * dt) * XMMatrixTranslation(r, r, r) * XMMatrixRotationRollPitchYaw(s_roll * dt, s_pitch * dt, s_yaw * dt) * XMMatrixTranslation(0.0f, 0.0f, 20.0f));
+		return (XMMatrixRotationRollPitchYaw(p_roll * dt, p_pitch * dt, p_yaw * dt) * XMMatrixTranslation(r, r, r) * XMMatrixRotationRollPitchYaw(s_roll * dt, s_pitch * dt, s_yaw * dt));
 	}
 };
 

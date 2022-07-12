@@ -81,6 +81,15 @@ void Func2D()
 		Window::ProcessWindowEvents();
 	}
 }
+
+
+DirectX::XMMATRIX CameraPos(float z , float roll , float pitch)
+{
+	using namespace DirectX;
+	auto pos = XMVector3Transform(XMVectorSet(0.0f, 0.0f, -z,0.0f) , XMMatrixRotationRollPitchYaw(0.0f , 0.0f, 0.0f));
+	return XMMatrixLookAtLH(pos, XMVectorZero(), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f)) * XMMatrixRotationRollPitchYaw(roll , pitch , 0.0f);
+}
+
 void Func3D()
 {
 	Window wnd("Window", 900, 700);
@@ -131,31 +140,35 @@ void Func3D()
 	float X_pos = 0.0f;
 	float Y_pos = 0.0f;
 
+	float z = -10.0f;
+
 	wnd.keyboard.EnableKeyRepeat();
 
 	wnd.keyboard.OnKeyPress = [&](Window::KeyBoard::EventT ent) {
 
-		if (ent.KEY_CODE == 'W')
+		if (ent.KEY_CODE == 'W' || ent.KEY_CODE == VK_UP)
 		{
-			Near += 0.05f;
+			/*Near += 0.05f;
 			Far += 0.05f;
 			if (Near >= 40.0f)
 			{
 				Near = 40.0f;
 				Far = 75.5f;
-			}
+			}*/
+			z += 0.5f;
 		}
-		else if (ent.KEY_CODE == 'S')
+		else if (ent.KEY_CODE == 'S' || ent.KEY_CODE == VK_DOWN)
 		{
-			Near -= 0.05f;
+			/*Near -= 0.05f;
 			Far -= 0.05f;
 			if (Near <= 0.1f)
 			{
 				Near = 0.1f;
 				Far = 39.6f;
-			}
+			}*/
+			z -= 0.5f;
 		}
-		else if (ent.KEY_CODE == 'X')
+		else if (ent.KEY_CODE == 'X' )
 		{
 			X_pos += 0.05f;
 		}
@@ -174,6 +187,31 @@ void Func3D()
 
 	};
 
+
+	bool Pressed = false;
+	std::pair<float, float> h_pos;
+	wnd.mouse.OnRightPress = [&](auto&) {
+
+		Pressed = true;
+		h_pos = wnd.mouse.GetXY();
+	};
+
+	wnd.mouse.OnRightRelease = [&](auto&) {
+
+		//Pressed = false;
+
+	};
+
+	wnd.mouse.OnMove = [&](auto&) {
+	
+		if (Pressed)
+		{
+			auto [x, y] = wnd.mouse.GetXY();
+			X_pos = (h_pos.first - x) / 360;
+			Y_pos = (h_pos.second - y) / 360;
+		}
+	};
+
 	while (wnd.IsOpen())
 	{
 		c3d.ClearCanvas();
@@ -188,7 +226,7 @@ void Func3D()
 
 			for (auto k = 0; k < BoxPerTex; ++k)
 			{
-				transform = DirectX::XMMatrixTranspose(tc[i + k].Update(tm) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, Near, Far) * DirectX::XMMatrixTranslation(X_pos, Y_pos, 0.0f));
+				transform = DirectX::XMMatrixTranspose(tc[i + k].Update(tm) * CameraPos(z , Y_pos , X_pos) * DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, Near, Far));
 				cbuff.Update(&transform, sizeof(transform));
 
 				c3d.Draw(tc[i + k]);
